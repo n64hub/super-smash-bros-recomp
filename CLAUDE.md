@@ -77,7 +77,7 @@ This repo is the game: its recompilation, the patches over it and the desktop bu
 - **Input.** RecompFrontend's default bindings. Keyboard: WASD the stick, Space A, Left Shift B, Q Z, R R, E L, Enter
   Start, the arrows the C buttons. Until players are assigned on the controls page, each pad plays a port of its own
   in the order the pads were connected and the keyboard plays port 1 (`RECOMPINPUT_PADS_IN_ORDER`,
-  `runtime-patches/RecompFrontend-0001`), and the game is told a controller is in port 1 and in each port with a pad
+  RecompFrontend-web's option, on in `CMakeLists.txt`), and the game is told a controller is in port 1 and in each port with a pad
   (`get_connected_device_info`, `main.cpp`). VS mode's character select shows HMN on all four ports, as on a console:
   a port without a pad can't move its hand, and the panel's HMN button sets it to CP or NA.
 - **Widescreen.** RecompFrontend's Graphics tab defaults to Aspect Ratio Expand, HUD Placement 16:9, Resolution Auto
