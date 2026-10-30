@@ -1,0 +1,21 @@
+# N64Recomp's configuration for Super Smash Bros. (USA), SHA-1 e2929e10fccc0aa84e5776227e798abc07cedabf: it reads the
+# game's code out of the ROM by the symbols in syms/ and writes RecompiledFuncs/ (tools/recompile.sh). The code is
+# stored raw in the ROM (only the game's data files are VPK0-compressed), so there is nothing to decompress first.
+[input]
+# The decomp's entrypoint (src/entry.s), which the ROM's header gives too.
+entrypoint = 0x80000400
+# Paths are relative to this file.
+symbols_file_path = "syms/smashbrothers.us.syms.toml"
+rom_file_path = "roms/smashbrothers.us.z64"
+output_func_path = "RecompiledFuncs"
+use_absolute_symbols = true
+
+# Overlays: the runtime registers the code inside ROM 0x1000 plus 1 MB at startup, and any other code only when it is
+# told it was loaded. Every overlay the game loads comes through syDmaLoadOverlay (the decomp's src/sys/dma.c), which
+# takes an SYOverlay (its ROM start and end, then where it loads): each scene's code as the scene manager starts it
+# (src/sc/scmanager.c), and the code the scenes share at boot. A hook at its start registers what it is about to copy
+# (src/game/recomp_api.cpp).
+[[patches.hook]]
+func = "syDmaLoadOverlay"
+before_vram = 0x80002BE4
+text = "{ void ssb_load_overlay(uint8_t*, gpr); ssb_load_overlay(rdram, ctx->r4); }"
