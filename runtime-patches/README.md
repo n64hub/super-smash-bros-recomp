@@ -5,9 +5,8 @@ This game's own changes to the submodules, applied on top of N64Recomp-browser's
 that submodule's highest, with a line here.
 
 ```
-rt64-0001    F3DFLX2, the game's own microcode: drawn as F3DEX2 (RT64's database knows it but types it Unknown, so
-             its lists ran as RDP commands), with its alpha light (MOVEMEM light 1) and its texture gen, which sets
-             each vertex's alpha from the table G_DMA_IO points at by the normal's angle to that light and leaves its
-             texture coordinates alone; the machines' paint and shading come from it. Frame matching pairs look ats
-             only for vertices that have one.
+RecompFrontend-0001  RECOMPINPUT_PADS_IN_ORDER (CMakeLists.txt turns it on): until players are assigned, each
+                     controller plays a port of its own, in the order they were connected, and the keyboard port 1,
+                     where single-player mode gave every controller to every port. Rumble goes to each port's own
+                     controller too. get_detected_controller_count says how many ports have one (main.cpp).
 ```

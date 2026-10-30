@@ -89,8 +89,13 @@ ultramodern::gfx_callbacks_t::gfx_data_t create_gfx() {
     return {};
 }
 
+// A port has a controller when its player is assigned, or until players are assigned when it is port 1 or a connected
+// pad's (RECOMPINPUT_PADS_IN_ORDER: the second pad connected plays port 2, and so on). The game reads which ports have
+// one for its menus: a VS battle's character select offers a hand on each.
 ultramodern::input::connected_device_info_t get_connected_device_info(int controller_num) {
-    if (recompinput::players::is_single_player_mode() || recompinput::players::get_player_is_assigned(controller_num)) {
+    bool unassigned = recompinput::players::get_number_of_assigned_players() == 0;
+    if ((unassigned && (controller_num == 0 || (size_t)controller_num < recompinput::get_detected_controller_count())) ||
+        recompinput::players::get_player_is_assigned(controller_num)) {
         return ultramodern::input::connected_device_info_t{
             .connected_device = ultramodern::input::Device::Controller,
             .connected_pak = ultramodern::input::Pak::None,
@@ -325,7 +330,8 @@ std::vector<recomp::GameEntry> supported_games = {
     },
 };
 
-// The game's threads (the decomp's include/ssb_thread.h, src/sys/sys_main.c) and libultra's managers.
+// The game's threads (the decomp's src/sys/main.c, scheduler.c, audio.c, controller.c and debug.c) and libultra's
+// managers.
 static std::string game_thread_name(const OSThread* t) {
     std::string name = "[Game] ";
 
@@ -350,12 +356,8 @@ static std::string game_thread_name(const OSThread* t) {
             name += "IDLE";
             break;
 
-        case 2:
-            name += "FAULT";
-            break;
-
         case 3:
-            name += "MAIN";
+            name += "SCHEDULER";
             break;
 
         case 4:
@@ -366,8 +368,12 @@ static std::string game_thread_name(const OSThread* t) {
             name += "GAME";
             break;
 
-        case 7:
-            name += "RESET";
+        case 6:
+            name += "CONTROLLER";
+            break;
+
+        case 8:
+            name += "DEBUG";
             break;
 
         default:
@@ -415,7 +421,10 @@ void reorder_texture_pack(recomp::mods::ModContext&) {
     recompui::renderer::trigger_texture_pack_update();
 }
 
+void install_crash_trace();
+
 int main(int argc, char** argv) {
+    install_crash_trace();
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--boot") == 0) {
             autoboot = true;
@@ -484,9 +493,9 @@ int main(int argc, char** argv) {
     ssb::register_patches();
 
     // Up to four players, each assigned a pad (or the keyboard) on the controls page's Assign players, which is then
-    // their own port (get_connected_device_info): four people play four players. Until players are assigned every pad and
-    // the keyboard play as one on every port, as in single-player mode, with RECOMPINPUT_SINGLE_PLAYER_UNTIL_ASSIGNED
-    // (CMakeLists.txt).
+    // their own port (get_connected_device_info): four people play four players. Until players are assigned each pad
+    // plays a port of its own in the order the pads were connected and the keyboard plays port 1, with
+    // RECOMPINPUT_SINGLE_PLAYER_UNTIL_ASSIGNED and RECOMPINPUT_PADS_IN_ORDER (CMakeLists.txt).
     recompinput::players::set_single_player_mode(false);
     recompinput::players::set_player_count_range(1, 4);
 
@@ -501,15 +510,6 @@ int main(int argc, char** argv) {
 
     ultramodern::renderer::callbacks_t renderer_callbacks{
         .create_render_context = [](uint8_t* rdram, ultramodern::renderer::WindowHandle window_handle, bool developer_mode) {
-            // On the page each list's copy to RAM lands a list late: the game's CPU reads a frame it drew only for a
-            // screen transition's background (Transition_SetBackgroundBuffer copies the frame it is about to show, right
-            // after its list is done), and the buffer then still holds its frame from a list or two before, the same
-            // picture on the screen being left. Without render to RAM those tiles would be black, and with the exact copy
-            // every list waits for the GPU's readback. It writes to a framebuffer only to clear them at boot, before its first
-            // list (sys_main.c: the console reports that once), and in the 64DD's code. The desktop build keeps RT64's default.
-#ifdef __EMSCRIPTEN__
-            recompui::renderer::set_render_to_ram_late(true);
-#endif
             return recompui::renderer::create_render_context(rdram, window_handle, ultramodern::renderer::PresentationMode::PresentEarly, developer_mode);
         },
     };

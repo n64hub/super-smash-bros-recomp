@@ -1,0 +1,153 @@
+diff --git a/recompinput/CMakeLists.txt b/recompinput/CMakeLists.txt
+index 35eff55..e996a66 100644
+--- a/recompinput/CMakeLists.txt
++++ b/recompinput/CMakeLists.txt
+@@ -67,3 +67,7 @@ option(RECOMPINPUT_SINGLE_PLAYER_UNTIL_ASSIGNED "A multiplayer game plays as sin
+ if (RECOMPINPUT_SINGLE_PLAYER_UNTIL_ASSIGNED OR EMSCRIPTEN)
+     target_compile_definitions(recompinput PRIVATE RECOMPINPUT_SINGLE_PLAYER_UNTIL_ASSIGNED=1)
+ endif()
++option(RECOMPINPUT_PADS_IN_ORDER "With RECOMPINPUT_SINGLE_PLAYER_UNTIL_ASSIGNED, until players are assigned each controller plays a port of its own in the order they were connected, and the keyboard port 1" OFF)
++if (RECOMPINPUT_PADS_IN_ORDER)
++    target_compile_definitions(recompinput PUBLIC RECOMPINPUT_PADS_IN_ORDER=1)
++endif()
+diff --git a/recompinput/include/recompinput/input_state.h b/recompinput/include/recompinput/input_state.h
+index 1961e29..d868951 100644
+--- a/recompinput/include/recompinput/input_state.h
++++ b/recompinput/include/recompinput/input_state.h
+@@ -28,6 +28,11 @@ namespace recompinput {
+     };
+ 
+     void poll_inputs();
++#ifdef RECOMPINPUT_PADS_IN_ORDER
++    // How many controllers are connected: until players are assigned, the first plays port 1, the second port 2 and
++    // so on (input_state.cpp).
++    size_t get_detected_controller_count();
++#endif
+     void set_rumble(int controller_num, bool on);
+     void update_rumble();
+     bool should_override_keystate(SDL_Scancode key, SDL_Keymod mod);
+diff --git a/recompinput/src/input_state.cpp b/recompinput/src/input_state.cpp
+index ebbc5c7..dc879c1 100644
+--- a/recompinput/src/input_state.cpp
++++ b/recompinput/src/input_state.cpp
+@@ -31,6 +31,25 @@ static struct {
+     InputArray<bool> rumble_active{};
+ } InputState;
+ 
++#ifdef RECOMPINPUT_PADS_IN_ORDER
++// RECOMPINPUT_PADS_IN_ORDER, for a game of several players: until players are assigned, each controller plays a port of
++// its own, in the order they were connected (poll_inputs), where single-player mode gives every controller to every
++// port, so a second pad moved player 1 too and a menu that each player works with a pad of their own (a character
++// select) had every cursor move at once. The keyboard plays port 1 (profiles.cpp). Assigned players play as before.
++// The caller holds controllers_mutex.
++static SDL_GameController* controller_for_port(int controller_num) {
++    if (controller_num < 0 || (size_t)controller_num >= InputState.detected_controllers.size()) {
++        return nullptr;
++    }
++    return InputState.detected_controllers[controller_num];
++}
++
++size_t recompinput::get_detected_controller_count() {
++    std::lock_guard lock{ InputState.controllers_mutex };
++    return InputState.detected_controllers.size();
++}
++#endif
++
+ void recompinput::poll_inputs() {
+     InputState.keys = SDL_GetKeyboardState(&InputState.numkeys);
+     InputState.keymod = SDL_GetModState();
+@@ -51,6 +70,14 @@ void recompinput::poll_inputs() {
+                 InputState.detected_controllers.push_back(controller);
+             }
+         }
++#ifdef RECOMPINPUT_PADS_IN_ORDER
++        // In the order they were connected: SDL's joystick instance ids rise with each connection.
++        std::sort(InputState.detected_controllers.begin(), InputState.detected_controllers.end(),
++            [](SDL_GameController* a, SDL_GameController* b) {
++                return SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(a)) <
++                    SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(b));
++            });
++#endif
+     }
+ 
+     // Read the deltas while resetting them to zero.
+@@ -164,6 +191,11 @@ void recompinput::update_rumble() {
+         return;
+     }
+     size_t rumbles_to_run = recompinput::players::is_single_player_mode() ? 1 : recompinput::players::get_number_of_assigned_players();
++#ifdef RECOMPINPUT_PADS_IN_ORDER
++    if (recompinput::players::is_single_player_mode()) {
++        rumbles_to_run = recompinput::get_detected_controller_count();
++    }
++#endif
+     if (rumbles_to_run > InputState.cur_rumble.size()) {
+         rumbles_to_run = InputState.cur_rumble.size();
+     }
+@@ -185,9 +217,15 @@ void recompinput::update_rumble() {
+         {
+             std::lock_guard lock{ InputState.controllers_mutex };
+             if (recompinput::players::is_single_player_mode()) {
++#ifdef RECOMPINPUT_PADS_IN_ORDER
++                if (SDL_GameController* controller = controller_for_port((int)i)) {
++                    do_rumble(controller, rumble_strength, duration);
++                }
++#else
+                 for (const auto &controller : InputState.detected_controllers) {
+                     do_rumble(controller, rumble_strength, duration);
+                 }
++#endif
+             }
+             else {
+                 auto &player = recompinput::players::get_player(i);
+@@ -206,9 +244,15 @@ bool controller_button_state(int controller_num, int32_t input_id) {
+         {
+             std::lock_guard lock{ InputState.controllers_mutex };
+             if (recompinput::players::is_single_player_mode()) {
++#ifdef RECOMPINPUT_PADS_IN_ORDER
++                if (SDL_GameController* controller = controller_for_port(controller_num)) {
++                    ret |= SDL_GameControllerGetButton(controller, button);
++                }
++#else
+                 for (const auto &controller : InputState.detected_controllers) {
+                     ret |= SDL_GameControllerGetButton(controller, button);
+                 }
++#endif
+             }
+             else {
+                 auto &player = recompinput::players::get_player(controller_num);
+@@ -249,12 +293,18 @@ float controller_axis_state(int controller_num, int32_t input_id, bool allow_sup
+ 
+             std::lock_guard lock{ InputState.controllers_mutex };
+             if (recompinput::players::is_single_player_mode()) {
++#ifdef RECOMPINPUT_PADS_IN_ORDER
++                if (SDL_GameController* controller = controller_for_port(controller_num)) {
++                    ret = gather_axis_state(controller);
++                }
++#else
+                 for (SDL_GameController *controller : InputState.detected_controllers) {
+                     float controller_state = gather_axis_state(controller);
+                     if (fabsf(controller_state) > fabsf(ret)) {
+                         ret = controller_state;
+                     }
+                 }
++#endif
+             }
+             else {
+                 auto &player = recompinput::players::get_player(controller_num);
+diff --git a/recompinput/src/profiles.cpp b/recompinput/src/profiles.cpp
+index dee6366..a1db6b4 100644
+--- a/recompinput/src/profiles.cpp
++++ b/recompinput/src/profiles.cpp
+@@ -398,7 +398,12 @@ namespace recompinput {
+     // the same keys, for players 2-4, in both of their slots), so upstream's keyboard played every controller player.
+     static bool player_reads_profile(int player_index, int profile_index) {
+         if (players::is_single_player_mode()) {
++#ifdef RECOMPINPUT_PADS_IN_ORDER
++            // Each port its own controller (input_state.cpp), and the keyboard port 1.
++            return input_profiles[profile_index].device != InputDevice::Keyboard || player_index == 0;
++#else
+             return true;
++#endif
+         }
+         InputDevice device = players::get_player_input_device(player_index);
+         if (input_profiles[profile_index].device != InputDevice::Keyboard) {

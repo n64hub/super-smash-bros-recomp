@@ -1,7 +1,7 @@
 # Super Smash Bros.: Recompiled: the recompiled game (RecompiledFuncs/, from tools/recompile.sh), the patches over it
-# (patches/, PatchesLib), and RecompFrontend's launcher and menus on RT64. The desktop program, and with Emscripten
-# (emcmake cmake; tools/build_web.sh) the page, SmashBrosRecompiled.html, through lib/N64Recomp-browser/frontend
-# (docs/web.md).
+# (patches/, PatchesLib), and RecompFrontend's launcher and menus on RT64. The desktop program; with Emscripten
+# (emcmake cmake) the same sources build a page, SmashBrosRecompiled.html, through lib/N64Recomp-browser/frontend, which
+# has no prebuilt shader list or play plans yet (CLAUDE.md).
 cmake_minimum_required(VERSION 3.20)
 
 if (APPLE)
@@ -183,6 +183,7 @@ add_executable(SmashBrosRecompiled)
 
 target_sources(SmashBrosRecompiled PRIVATE
     ${CMAKE_SOURCE_DIR}/src/main/main.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/crash_trace.cpp
     ${CMAKE_SOURCE_DIR}/src/main/register_overlays.cpp
     ${CMAKE_SOURCE_DIR}/src/game/config.cpp
     ${CMAKE_SOURCE_DIR}/src/game/libultra.cpp
@@ -280,7 +281,7 @@ if (WIN32)
     )
 
     target_sources(SmashBrosRecompiled PRIVATE ${CMAKE_SOURCE_DIR}/icons/app.rc)
-    target_link_libraries(SmashBrosRecompiled PRIVATE SDL2 Winmm.lib)
+    target_link_libraries(SmashBrosRecompiled PRIVATE SDL2 Winmm.lib Dbghelp.lib)
     add_compile_definitions(NOMINMAX)
 endif()
 
@@ -339,6 +340,9 @@ set(RECOMP_FRONTEND_RT64_PATH ${CMAKE_SOURCE_DIR}/lib/rt64)
 # plays as single-player mode until players are assigned, as with Emscripten: without it a player alone needed to
 # assign their pad or keyboard first, and the keyboard played every pad's player.
 set(RECOMPINPUT_SINGLE_PLAYER_UNTIL_ASSIGNED ON CACHE BOOL "" FORCE)
+# And until then each pad plays a port of its own, in the order they were connected, the keyboard port 1
+# (runtime-patches/RecompFrontend-0001): four people with four pads play four players without assigning them.
+set(RECOMPINPUT_PADS_IN_ORDER ON CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/lib/RecompFrontend)
 
 if (SSB_PATCHES)

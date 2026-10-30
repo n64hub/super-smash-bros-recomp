@@ -4,4 +4,3 @@ __start = 0x80000000;
 
 osRecvMesg_recomp = 0x8F000004;
 osEPiStartDma_recomp = 0x8F000008;
-recomp_get_aspect_ratio = 0x8F000010;

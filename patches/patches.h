@@ -20,7 +20,4 @@
 #include <common.h>
 #include <ssb_types.h>
 
-// The game's natives (src/game/recomp_api.cpp).
-f32 recomp_get_aspect_ratio(f32 original);
-
 #endif

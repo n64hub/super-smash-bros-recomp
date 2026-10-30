@@ -1,13 +1,10 @@
-// The natives the patches call (patches/syms.ld gives each a dummy address that N64Recomp turns into a call by name).
+// The natives us.toml's hooks call, each from the generated C of the game function it hooks.
 
 #include "recomp.h"
 #include "librecomp/overlays.hpp"
-#include "librecomp/helpers.hpp"
 #include "librecomp/game.hpp"
-#include "ultramodern/config.hpp"
-#include "recompui/recompui.h"
 
-#include <algorithm>
+#include <chrono>
 
 // The hook at syDmaLoadOverlay's start (us.toml): the code sections in the overlay's stretch of ROM are now at its
 // ram_load_start. ovl is the game's SYOverlay: rom_start, rom_end, ram_load_start, then the sections' bounds.
@@ -20,16 +17,16 @@ extern "C" void ssb_load_overlay(uint8_t* rdram, gpr ovl) {
     }
 }
 
-// recomp_get_aspect_ratio(original): the picture's aspect ratio, the window's with Aspect Ratio Expand (never narrower
-// than original), else original (patches/widescreen.c).
-extern "C" void recomp_get_aspect_ratio(uint8_t* rdram, recomp_context* ctx) {
-    float original = _arg<0, float>(rdram, ctx);
-    int width, height;
-    recompui::get_window_size(width, height);
-    if (ultramodern::renderer::get_graphics_config().ar_option != ultramodern::renderer::AspectRatio::Expand ||
-        height <= 0) {
-        _return(ctx, original);
-        return;
+extern "C" void yield_self_1ms(uint8_t* rdram);
+
+// The hook at the start of each getter the game's busy-waits call (us.toml): called again within 100 us means a loop is
+// spinning on it, so the other game threads (and the messages the VI and audio send them) get to run first, at most a
+// millisecond. A getter called once a frame never waits.
+extern "C" void ssb_spin_yield(uint8_t* rdram, int getter) {
+    using clock = std::chrono::steady_clock;
+    thread_local clock::time_point last_call[4];
+    if (clock::now() - last_call[getter] < std::chrono::microseconds(100)) {
+        yield_self_1ms(rdram);
     }
-    _return(ctx, std::max(static_cast<float>(width) / height, original));
+    last_call[getter] = clock::now();
 }
