@@ -287,6 +287,11 @@ void reset_audio(uint32_t output_freq) {
 
     audio_device = SDL_OpenAudioDevice(nullptr, false, &spec_desired, nullptr, 0);
     if (audio_device == 0) {
+        // Said in a message box too: the release is a windowed program, with no console for stderr, so without one it
+        // would close without a word on a system with no audio device.
+        std::string message = std::string("No audio device could be found. Please make sure an audio device is "
+            "available.\nError opening audio device: ") + SDL_GetError();
+        ultramodern::error_handling::message_box(message.c_str());
         exit_error("SDL error opening audio device: %s\n", SDL_GetError());
     }
     SDL_PauseAudioDevice(audio_device, 0);
@@ -440,14 +445,23 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-#if defined(__linux__) && !defined(__EMSCRIPTEN__)
-    // RecompFrontend finds assets/ (and portable.txt) in the working directory, which a desktop launcher or a shell
-    // elsewhere doesn't set to the release's folder: when assets/ isn't there, work from the program's own folder.
-    // A dev build run from the repo's root keeps the root, which is where assets/ is.
+#if (defined(__linux__) || defined(_WIN32)) && !defined(__EMSCRIPTEN__)
+    // RecompFrontend finds assets/ (and portable.txt) in the working directory, which a desktop launcher, a shortcut
+    // or a shell elsewhere doesn't set to the release's folder: when assets/ isn't there, work from the program's own
+    // folder. Without assets/ the launcher throws on its first frame and the program closes. A dev build run from the
+    // repo's root keeps the root, which is where assets/ is.
     {
         std::error_code ec;
         if (!std::filesystem::is_directory("assets", ec)) {
+#ifdef _WIN32
+            wchar_t exe_path[MAX_PATH];
+            DWORD exe_len = GetModuleFileNameW(nullptr, exe_path, MAX_PATH);
+            std::filesystem::path exe_dir = std::filesystem::path(std::wstring(exe_path, exe_len)).parent_path();
+            // is_directory left its "not found" in ec.
+            ec = exe_len == 0 || exe_len == MAX_PATH ? std::make_error_code(std::errc::filename_too_long) : std::error_code{};
+#else
             std::filesystem::path exe_dir = std::filesystem::read_symlink("/proc/self/exe", ec).parent_path();
+#endif
             if (!ec && std::filesystem::is_directory(exe_dir / "assets", ec)) {
                 std::filesystem::current_path(exe_dir, ec);
             }
