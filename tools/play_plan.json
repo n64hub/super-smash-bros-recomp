@@ -7,10 +7,10 @@
   "does. tools/shader_survey.js starts the battle from there as character select and stage select do: a time battle",
   "of four computer players (Mario, Link, Pikachu, Ness) on Peach's Castle with items, a minute of the game's time on",
   "its clock (dSYTaskmanUpdateCount, 60 a second), behind a need that fails the run unless that battle is playing,",
-  "then the battle's clock run out and its results. The scene the game is in is gSCManagerSceneData.scene_curr",
-  "(0x800A4AD0, its high byte), the main menu's cursor sMNModeSelectOption (0x80132C88) and VS Mode's",
-  "sMNVSModeCursorIndex (0x80134948). tools/play_plan_extended.json goes on to more stages, for when a longer play is",
-  "needed."
+  "then the battle's clock run out and its results (after Sudden Death if it ties). The scene the game is in is",
+  "gSCManagerSceneData.scene_curr (0x800A4AD0, its high byte), the main menu's cursor sMNModeSelectOption (0x80132C88)",
+  "and VS Mode's sMNVSModeCursorIndex (0x80134948). tools/play_plan_extended.json goes on to more stages, for when a",
+  "longer play is needed."
  ],
  "page": "SmashBrosRecompiled.html",
  "load": [["until", "RT64: all [0-9]+ prebuilt shaders built|once the game draws", 45000], ["wait", 5000]],
@@ -46,8 +46,8 @@
   ["clock"],
   ["need", "scene() === 22 && stage() === 0"],
   ["eval", "timeUp()"],
-  ["wait", 9000],
-  ["shot", "results.png"],
-  ["need", "scene() === 24"]
+  ["need", "untilScene(24, 60000)"],
+  ["wait", 2000],
+  ["shot", "results.png"]
  ]
 }

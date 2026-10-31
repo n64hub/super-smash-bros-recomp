@@ -18,7 +18,9 @@
 //                                   select start one; resolves true once it plays
 //   go(scene, prev, ms)             starts that scene as if from prev (a menu that reads where it came from), and
 //                                   resolves true once it plays: a menu, from another menu
-//   timeUp()                        ends the VS battle playing as its clock running out does: its results follow
+//   timeUp()                        ends the VS battle playing as its clock running out does: its results follow,
+//                                   after Sudden Death when it ends in a tie (the computer players end that too, in
+//                                   a few seconds to half a minute), so a plan waits for them with untilScene(24, ms)
 //   quit(ms)                        ends the scene playing as its own end does, and resolves true once another plays (a
 //                                   Bonus stage goes back to its character select)
 //   bonus(kind, fighter, ms)        Bonus Practice 1 (Break the Targets) or 2 (Board the Platforms) for that fighter,
