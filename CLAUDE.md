@@ -60,6 +60,9 @@ This repo is the game: its recompilation, the patches over it, the desktop build
   cartridge answers them, by instruction patches in `us.toml`: two read the RSP's IMEM and DMEM at boot, which the
   runtime doesn't map, and two run code they load from a data file, which is in no overlay. Each penalty they set is
   saved in SRAM, so a check left failing would follow the save.
+- **The game's own bugs** that stop it are fixed by hooks in `us.toml` too: the character data screen's demo, which
+  How to Play ends in, reads past a table and out of memory when the title never picked its two demo fighters (How
+  to Play from the Data menu); a hook gives it two.
 - **Hardware registers.** The runtime maps none, so a read of one crashes. The audio thread reads the AI's length
   register itself (`IO_READ(AI_LEN_REG)`, twice in `syAudioThreadMain`); `us.toml` turns each into osAiGetLength's
   answer. Any other read of an 0xA4xxxxxx address in `RecompiledFuncs/` would need the same.
