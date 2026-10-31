@@ -52,9 +52,32 @@ Game from Metal Mario's stage. Play them with N64Recomp-browser's `tools/play_pa
 
 ## The shader list
 
-`src/rt64_shaders.txt` holds 390 shaders: 59 for the boot (the launcher, the opening, the title and the main menu, and
-five VS battles drew in plays after the recording, added there so that every stage has them), then 38 sections
+`src/rt64_shaders.txt` holds 391 shaders: 60 for the boot (the launcher, the opening, the title and the main menu, and
+six VS battles drew in plays after the recording, added there so that every stage has them), then 38 sections
 recorded in headless Chrome at 1256x645 by `tools/record_shaders.sh`, a page load a section, about 45 minutes in all:
 the menus (29), the nine VS stages (92-156 each, most of them in every one, a battle's fighters, items and results
 among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 37-68) and each
 fighter's two Bonus Practice stages (17-38). Its header says what each section played and what it leaves out.
+
+
+## How it plays
+
+In Chrome, uncapped (`?uncapped`, N64Recomp-browser's `docs/playing.md`), the page interpolates to well over the
+display's rate: on a desktop GPU standing in for a laptop's integrated graphics (a 3840x2000 canvas) its median is 201
+presents a second (174-244), the longest frame gap 53 ms, with another program drawing on the same GPU, so a quiet
+number is higher; at 1256x645 on a busy host it is 300-344. Chrome builds all of the list's 271 pipelines behind the
+launcher, in 24-28 s, so no stage ever waits for one.
+
+Firefox builds a section only when it first draws, with the game waiting: 6.5-8.7 s for the boot's before the
+opening, then 9-12 s as the first battle starts, whose frames draw shaders from the first few VS stages' sections
+(most of a battle's shaders are in every one), and under a second for each stage after that. Its plays read 180-200
+presents a second at 1256x645 on a busy host. The first battle's is the only long wait a player sees. Both browsers
+play the plans with no WebGPU errors. A battle's items differ from play to play, so a play still turns up a shader
+the list misses now and then (one in a few plays, built in half a second); each goes into the boot's section.
+
+## Its runs
+
+`plays.jsonl` holds every run of the page, failed ones too, one JSON line each as N64Recomp-browser's
+`tools/play_page.mjs --record plays.jsonl --game ssb` writes it (its `docs/playing.md` says what each field is). While
+this repository is private they are kept here, and they move to N64Recomp-browser's own `plays.jsonl` when the page
+is published.

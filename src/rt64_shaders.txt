@@ -21,7 +21,7 @@
 # the challenger and unlock screens, and the How to Play movie. Flags follow settings (filtering, HDR, MSAA,
 # upscaling), so a change to one of those defaults means recording again.
 #
-# The boot's last five are VS battles' that plays of Peach's Castle and Mushroom Kingdom with items missed after the
+# The boot's last six are VS battles' that plays of Peach's Castle and Mushroom Kingdom with items missed after the
 # recording, added by hand to the boot so that every stage has them.
 0f0a4001 00002c3f fcffffff fffcf279 04cb540b
 00504340 00082c3f fcffffff fffdf6fb 0800000b
@@ -82,6 +82,7 @@ c4112078 00182c3f fc327e05 ff17f7ff 0800000c
 00553049 00082c0f fc309661 552eff7f 08037604
 00504341 00082c0f fc127e24 fffff3f9 0b333200
 00504341 00082c0f fcffffff fffdf2f9 0803fe08
+c4112078 0018ac3f fc127e05 ff17f3ff 0803fe0c
 section menus
 005041c9 00002c3f fcffffff fffdf6fb 0800000b
 00504241 00002c3f fc309661 552eff7f 019b100b
