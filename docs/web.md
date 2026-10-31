@@ -70,15 +70,20 @@ Its header says what each section played and what it leaves out.
 In Chrome, uncapped (`?uncapped`, N64Recomp-browser's `docs/playing.md`), the page interpolates to well over the
 display's rate: on a desktop GPU standing in for a laptop's integrated graphics (a 3840x2000 canvas) its median is 201
 presents a second (174-244), the longest frame gap 53 ms, with another program drawing on the same GPU, so a quiet
-number is higher; at 1256x645 on a busy host it is 300-344. Chrome builds all of the list's 272 pipelines behind the
-launcher, in 24-28 s, so no stage ever waits for one.
+number is higher; at 1256x645 it is 334-347 with the GPU to itself, held by the uncapped rate, and 300-344 on a busy
+host. Chrome builds all of the list's 309 pipelines behind the launcher, in 27-32 s, so no stage ever waits for
+one.
 
 Firefox builds a section only when it first draws, with the game waiting: 6.5-8.7 s for the boot's before the
 opening, then 9-12 s as the first battle starts, whose frames draw shaders from the first few VS stages' sections
-(most of a battle's shaders are in every one), and under a second for each stage after that. Its plays read 180-200
+(most of a battle's shaders are in every one), and under a second for each stage after that. Its plays read 165-200
 presents a second at 1256x645 on a busy host. The first battle's is the only long wait a player sees. Both browsers
 play the plans with no WebGPU errors. A battle's items differ from play to play, so a play still turns up a shader
 the list misses now and then (one in a few plays, built in half a second); each goes into the boot's section.
+
+`tools/play_plan_soak.json`'s 18 minutes in Firefox, nine battles one after another: the wasm heap stays at its
+1536 MB, the save's anti-piracy bits at 0 and port 1's Rumble Pak started, and Firefox's GPU process grows as each new
+stage's pipelines are built, then holds at 1.46-1.55 GB for the last ten minutes.
 
 ## Its runs
 
