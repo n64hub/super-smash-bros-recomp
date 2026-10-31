@@ -60,6 +60,9 @@ This repo is the game: its recompilation, the patches over it, the desktop build
   cartridge answers them, by instruction patches in `us.toml`: two read the RSP's IMEM and DMEM at boot, which the
   runtime doesn't map, and two run code they load from a data file, which is in no overlay. Each penalty they set is
   saved in SRAM, so a check left failing would follow the save.
+- **The game's own bugs** that stop it are fixed by hooks in `us.toml` too: the character data screen's demo, which
+  How to Play ends in, reads past a table and out of memory when the title never picked its two demo fighters (How
+  to Play from the Data menu); a hook gives it two.
 - **Hardware registers.** The runtime maps none, so a read of one crashes. The audio thread reads the AI's length
   register itself (`IO_READ(AI_LEN_REG)`, twice in `syAudioThreadMain`); `us.toml` turns each into osAiGetLength's
   answer. Any other read of an 0xA4xxxxxx address in `RecompiledFuncs/` would need the same.
@@ -81,7 +84,8 @@ This repo is the game: its recompilation, the patches over it, the desktop build
   Start, the arrows the C buttons. Until players are assigned on the controls page, each pad plays a port of its own
   in the order the pads were connected and the keyboard plays port 1 (`RECOMPINPUT_PADS_IN_ORDER`,
   RecompFrontend-web's option, on in `CMakeLists.txt`), and the game is told a controller is in port 1 and in each port with a pad
-  (`get_connected_device_info`, `main.cpp`). VS mode's character select shows HMN on all four ports, as on a console:
+  (`get_connected_device_info`, `main.cpp`), each with a Rumble Pak, which the game starts a motor on only when one is
+  there. VS mode's character select shows HMN on all four ports, as on a console:
   a port without a pad can't move its hand, and the panel's HMN button sets it to CP or NA.
 - **Widescreen.** RecompFrontend's Graphics tab defaults to Aspect Ratio Expand, HUD Placement 16:9, Resolution Auto
   and Framerate Display. RT64 widens the 3D, and the stages' backgrounds, which the game draws as part of the 3D, reach

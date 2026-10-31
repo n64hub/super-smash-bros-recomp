@@ -94,3 +94,15 @@ text = "{ void ssb_spin_yield(uint8_t*, int); ssb_spin_yield(rdram, 3); }"
 func = "syDmaLoadOverlay"
 before_vram = 0x80002BE4
 text = "{ void ssb_load_overlay(uint8_t*, gpr); ssb_load_overlay(rdram, ctx->r4); }"
+
+# The character data screen's demo, which How to Play goes to when it ends (sc/sccommon/scexplain.c), shows and then
+# fights the scene data's two demo fighters, which only the title picks, when it is left to its attract cycle
+# (mn/mncommon/mntitle.c). Their default is nFTKindNull (sc/scmanager.c), so a player who presses Start at the title
+# and plays How to Play to its end from the Data menu reaches it with fighter 28: mnCharactersGetPage reads its
+# 12-entry table at 28, past its end, and the emblem it then makes reads out of memory (on the page, "memory access out
+# of bounds", and the game stops). A hook at mnCharactersInitVars' start gives it Mario and Fox in their place, two
+# fighters every save has, as the title would have picked two.
+[[patches.hook]]
+func = "mnCharactersInitVars"
+before_vram = 0x80133568
+text = "{ gpr scene = (gpr)(int32_t)0x800A4AD0; if (MEM_BU(0xD, scene) >= 12 || MEM_BU(0xE, scene) >= 12) { MEM_B(0xD, scene) = 0; MEM_B(0xE, scene) = 1; } }"
