@@ -13,7 +13,7 @@
   "needed."
  ],
  "page": "SmashBrosRecompiled.html",
- "load": [["until", "RT64: all [0-9]+ prebuilt shaders built|once the game draws|Device Name", 45000], ["wait", 5000]],
+ "load": [["until", "RT64: all [0-9]+ prebuilt shaders built|once the game draws", 45000], ["wait", 5000]],
  "setup": [["rom", 627, 364], ["wait", 3000]],
  "start": [
   ["click", 627, 364],

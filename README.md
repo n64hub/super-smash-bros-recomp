@@ -21,7 +21,8 @@ order the pads were connected, and the keyboard plays port 1, so up to four peop
 (the controls page's Assign players still picks who plays which port). In a window wider than 4:3 the battles and the
 stages' backgrounds reach the window's edges, and the menus and the HUD stay in the middle 4:3 (Graphics: Aspect
 Ratio Expand by default, Original for the console's 4:3). RT64 draws at the window's resolution, with MSAA, and
-interpolates to the display's rate.
+interpolates to the display's rate. The same game builds into a web page that plays in Chrome and Firefox through
+WebGPU (`docs/web.md`).
 
 ## The ROM
 

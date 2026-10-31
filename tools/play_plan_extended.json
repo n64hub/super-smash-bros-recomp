@@ -11,7 +11,7 @@
  ],
  "page": "SmashBrosRecompiled.html",
  "load": [
-  ["until", "RT64: all [0-9]+ prebuilt shaders built|once the game draws|Device Name", 45000],
+  ["until", "RT64: all [0-9]+ prebuilt shaders built|once the game draws", 45000],
   ["wait", 5000]
  ],
  "setup": [
