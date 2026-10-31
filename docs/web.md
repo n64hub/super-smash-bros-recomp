@@ -7,8 +7,8 @@ built from your ROM like the desktop program, so it is never built in CI and nev
 
 What is the game's own stays here: the `EMSCRIPTEN` branches of `CMakeLists.txt` that make the game a page,
 `tools/build_web.sh`, the prebuilt shader list (`src/rt64_shaders.txt`, recorded by `tools/shader_plan.json`; the
-list's header says how to record it again), the play plans (`tools/play_plan.json`, `tools/play_plan_extended.json`)
-and the survey they share (`tools/shader_survey.js`). The rest is N64Recomp-browser's: `docs/porting.md` (WebGPU and
+list's header says how to record it again), the play plans (`tools/play_plan.json`, `tools/play_plan_extended.json`,
+`tools/play_plan_soak.json`) and the survey they share (`tools/shader_survey.js`). The rest is N64Recomp-browser's: `docs/porting.md` (WebGPU and
 the shaders, prebuilt shader lists, Emscripten), `docs/playing.md` (playing and measuring a page), `docs/forks.md` and
 `docs/findings.md`.
 
@@ -48,16 +48,20 @@ count (`dSYTaskmanUpdateCount`, 60 a second).
 `tools/play_plan.json` (about 2 minutes) boots, shoots the title, the main menu, VS Mode and character select, plays
 a minute of the game's time on Peach's Castle and runs the battle's clock out to its results.
 `tools/play_plan_extended.json` (about 4 minutes) goes on to Mushroom Kingdom, Link's Break the Targets and the 1P
-Game from Metal Mario's stage. Play them with N64Recomp-browser's `tools/play_page.mjs` (its `docs/playing.md`).
+Game from Metal Mario's stage. `tools/play_plan_soak.json` (about 18 minutes) is for a leak or OOM hunt: a battle on
+each of the nine VS stages in turn, logging the wasm and JS heaps, the boot count, the anti-piracy bits and port 1's
+Rumble Pak after each. Play them with N64Recomp-browser's `tools/play_page.mjs` (its `docs/playing.md`).
 
 ## The shader list
 
-`src/rt64_shaders.txt` holds 391 shaders: 60 for the boot (the launcher, the opening, the title and the main menu, and
-six VS battles drew in plays after the recording, added there so that every stage has them), then 38 sections
-recorded in headless Chrome at 1256x645 by `tools/record_shaders.sh`, a page load a section, about 45 minutes in all:
+`src/rt64_shaders.txt` holds 413 shaders: 60 for the boot (the launcher, the opening, the title and the main menu, and
+six VS battles drew in plays after the recording, added there so that every stage has them), then 53 sections
+recorded in headless Chrome at 1256x645 by `tools/record_shaders.sh`, a page load a section, about 70 minutes in all:
 the menus (29), the nine VS stages (92-156 each, most of them in every one, a battle's fighters, items and results
-among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 37-68) and each
-fighter's two Bonus Practice stages (17-38). Its header says what each section played and what it leaves out.
+among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 37-68), each
+fighter's two Bonus Practice stages (17-38), the 1P Game's eight stages on the VS stages (45-89), a team battle, Sudden
+Death, Training Mode, the How to Play movie, the 1P Game's Continue, its ending and credits, and the challenger and
+unlock message (24-111). Its header says what each section played and what it leaves out.
 
 
 ## How it plays
