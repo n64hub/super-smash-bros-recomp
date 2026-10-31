@@ -52,7 +52,9 @@ Game from Metal Mario's stage. Play them with N64Recomp-browser's `tools/play_pa
 
 ## The shader list
 
-`src/rt64_shaders.txt` was recorded in headless Chrome at 1256x645 by `tools/record_shaders.sh`, a page load a
-section: the boot, the menus, the nine VS stages, the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone,
-Final Destination) and each fighter's two Bonus Practice stages. Its header says what each section played and what it
-leaves out.
+`src/rt64_shaders.txt` holds 385 shaders: 54 for the boot (the launcher, the opening, the title and the main menu),
+then 38 sections recorded in headless Chrome at 1256x645 by `tools/record_shaders.sh`, a page load a section, about 45
+minutes in all: the menus (29), the nine VS stages (92-156 each, most of them in every one, a battle's fighters, items
+and results among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 37-68)
+and each fighter's two Bonus Practice stages (17-38). Its header says what each section played and what it leaves
+out.
