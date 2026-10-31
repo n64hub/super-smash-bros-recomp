@@ -18,11 +18,11 @@
   "each of the 1P Game's own stages, started from its stage as its character select does (spgame(): Metal Mario's Meta",
   "Crystal, Race to the Finish, the Fighting Polygon Team's Duel Zone and Master Hand's Final Destination), its intro",
   "and 40 s of its battle, port 1 standing still; and one for each fighter's Bonus Practice 1 (Break the Targets) and 2",
-  "(Board the Platforms) as its character select starts it (bonus()), 20 s, the fighter standing still. Not recorded: the 1P",
-  "Game's teams and giants on the VS stages, its continue, game over, ending and credits, a target broken or a",
-  "platform boarded, Training Mode's own screens, team battles, Sudden Death, the challenger and unlock screens, and",
-  "the How to Play movie. Flags follow settings (filtering, HDR, MSAA, upscaling), so a change to one of those defaults",
-  "means recording again."
+  "(Board the Platforms) as its character select starts it (bonus()), 20 s, the fighter standing still (some fall off,",
+  "which ends the stage). Not recorded: the 1P Game's teams and giants on the VS stages, its continue, game over,",
+  "ending and credits, a target broken or a platform boarded, Training Mode's own screens, team battles, Sudden Death,",
+  "the challenger and unlock screens, and the How to Play movie. Flags follow settings (filtering, HDR, MSAA,",
+  "upscaling), so a change to one of those defaults means recording again."
  ],
  "load": [
   [
@@ -1195,7 +1195,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 17"
+     "scene() === 53 && stage() === 17 || scene() === 19"
     ]
    ]
   },
@@ -1254,7 +1254,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 18"
+     "scene() === 53 && stage() === 18 || scene() === 19"
     ]
    ]
   },
@@ -1313,7 +1313,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 19"
+     "scene() === 53 && stage() === 19 || scene() === 19"
     ]
    ]
   },
@@ -1372,7 +1372,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 20"
+     "scene() === 53 && stage() === 20 || scene() === 19"
     ]
    ]
   },
@@ -1431,7 +1431,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 21"
+     "scene() === 53 && stage() === 21 || scene() === 19"
     ]
    ]
   },
@@ -1490,7 +1490,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 22"
+     "scene() === 53 && stage() === 22 || scene() === 19"
     ]
    ]
   },
@@ -1549,7 +1549,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 23"
+     "scene() === 53 && stage() === 23 || scene() === 19"
     ]
    ]
   },
@@ -1608,7 +1608,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 24"
+     "scene() === 53 && stage() === 24 || scene() === 19"
     ]
    ]
   },
@@ -1667,7 +1667,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 25"
+     "scene() === 53 && stage() === 25 || scene() === 19"
     ]
    ]
   },
@@ -1726,7 +1726,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 26"
+     "scene() === 53 && stage() === 26 || scene() === 19"
     ]
    ]
   },
@@ -1785,7 +1785,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 27"
+     "scene() === 53 && stage() === 27 || scene() === 19"
     ]
    ]
   },
@@ -1844,7 +1844,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 28"
+     "scene() === 53 && stage() === 28 || scene() === 19"
     ]
    ]
   },
@@ -1903,7 +1903,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 29"
+     "scene() === 53 && stage() === 29 || scene() === 20"
     ]
    ]
   },
@@ -1962,7 +1962,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 30"
+     "scene() === 53 && stage() === 30 || scene() === 20"
     ]
    ]
   },
@@ -2021,7 +2021,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 31"
+     "scene() === 53 && stage() === 31 || scene() === 20"
     ]
    ]
   },
@@ -2080,7 +2080,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 32"
+     "scene() === 53 && stage() === 32 || scene() === 20"
     ]
    ]
   },
@@ -2139,7 +2139,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 33"
+     "scene() === 53 && stage() === 33 || scene() === 20"
     ]
    ]
   },
@@ -2198,7 +2198,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 34"
+     "scene() === 53 && stage() === 34 || scene() === 20"
     ]
    ]
   },
@@ -2257,7 +2257,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 35"
+     "scene() === 53 && stage() === 35 || scene() === 20"
     ]
    ]
   },
@@ -2316,7 +2316,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 36"
+     "scene() === 53 && stage() === 36 || scene() === 20"
     ]
    ]
   },
@@ -2375,7 +2375,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 37"
+     "scene() === 53 && stage() === 37 || scene() === 20"
     ]
    ]
   },
@@ -2434,7 +2434,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 38"
+     "scene() === 53 && stage() === 38 || scene() === 20"
     ]
    ]
   },
@@ -2493,7 +2493,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 39"
+     "scene() === 53 && stage() === 39 || scene() === 20"
     ]
    ]
   },
@@ -2552,7 +2552,7 @@
     ],
     [
      "need",
-     "scene() === 53 && stage() === 40"
+     "scene() === 53 && stage() === 40 || scene() === 20"
     ]
    ]
   }
