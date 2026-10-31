@@ -24,8 +24,9 @@
   "battle, two against two, run out to its results; a battle that ends tied, its Sudden Death and results; Training",
   "Mode and its pause menu; the How to Play movie; a 1P stage lost three times to its Continue and on to the next; and",
   "Master Hand beaten to Game Clear, the staff roll and Congratulations, and from there the challenger, Captain",
-  "Falcon's battle and his unlock message. Each of these starts at VS Mode's character select, as the castle's does.",
-  "Not recorded: a target broken or a platform boarded, the game over, and the other challengers (Luigi, Ness,",
+  "Falcon's battle and his unlock message; and the opening movie, which the boot skips with Start, as the auto demo's",
+  "end starts it (go(28, 61)), to the title. Each but the last starts at VS Mode's character select, as the castle's",
+  "does. Not recorded: a target broken or a platform boarded, the game over, and the other challengers (Luigi, Ness,",
   "Jigglypuff), whose battles draw as their VS stages do. Flags follow settings (filtering, HDR, MSAA, upscaling), so a",
   "change to one of those defaults means recording again."
  ],
@@ -3668,6 +3669,27 @@
     [
      "wait",
      15000
+    ]
+   ]
+  },
+  {
+   "name": "opening",
+   "steps": [
+    [
+     "evalFile",
+     "shader_survey.js"
+    ],
+    [
+     "need",
+     "go(28, 61, 15000)"
+    ],
+    [
+     "need",
+     "untilScene(1, 150000)"
+    ],
+    [
+     "wait",
+     3000
     ]
    ]
   }

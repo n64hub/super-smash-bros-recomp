@@ -54,14 +54,15 @@ Rumble Pak after each. Play them with N64Recomp-browser's `tools/play_page.mjs` 
 
 ## The shader list
 
-`src/rt64_shaders.txt` holds 413 shaders: 60 for the boot (the launcher, the opening, the title and the main menu, and
-six VS battles drew in plays after the recording, added there so that every stage has them), then 53 sections
-recorded in headless Chrome at 1256x645 by `tools/record_shaders.sh`, a page load a section, about 70 minutes in all:
-the menus (29), the nine VS stages (92-156 each, most of them in every one, a battle's fighters, items and results
-among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 37-68), each
-fighter's two Bonus Practice stages (17-38), the 1P Game's eight stages on the VS stages (45-89), a team battle, Sudden
-Death, Training Mode, the How to Play movie, the 1P Game's Continue, its ending and credits, and the challenger and
-unlock message (24-111). Its header says what each section played and what it leaves out.
+`src/rt64_shaders.txt` holds 440 shaders: 60 for the boot (the launcher, the opening's start, the title and the main
+menu, and six VS battles drew in plays after the recording, added there so that every stage has them), then 54
+sections recorded in headless Chrome at 1256x645 by `tools/record_shaders.sh`, a page load a section, about 75 minutes
+in all: the menus (29), the nine VS stages (92-156 each, most of them in every one, a battle's fighters, items and
+results among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 37-68),
+each fighter's two Bonus Practice stages (17-38), the 1P Game's eight stages on the VS stages (45-89), a team battle,
+Sudden Death, Training Mode, the How to Play movie, the 1P Game's Continue, its ending and credits, the challenger
+and unlock message (24-111), and the whole opening movie, which a player who presses Start skips (158).
+Its header says what each section played and what it leaves out.
 
 
 ## How it plays
