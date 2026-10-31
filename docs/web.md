@@ -65,7 +65,7 @@ fighter's two Bonus Practice stages (17-38). Its header says what each section p
 In Chrome, uncapped (`?uncapped`, N64Recomp-browser's `docs/playing.md`), the page interpolates to well over the
 display's rate: on a desktop GPU standing in for a laptop's integrated graphics (a 3840x2000 canvas) its median is 201
 presents a second (174-244), the longest frame gap 53 ms, with another program drawing on the same GPU, so a quiet
-number is higher; at 1256x645 on a busy host it is 300-344. Chrome builds all of the list's 271 pipelines behind the
+number is higher; at 1256x645 on a busy host it is 300-344. Chrome builds all of the list's 272 pipelines behind the
 launcher, in 24-28 s, so no stage ever waits for one.
 
 Firefox builds a section only when it first draws, with the game waiting: 6.5-8.7 s for the boot's before the
