@@ -91,14 +91,16 @@ ultramodern::gfx_callbacks_t::gfx_data_t create_gfx() {
 
 // A port has a controller when its player is assigned, or until players are assigned when it is port 1 or a connected
 // pad's (RECOMPINPUT_PADS_IN_ORDER: the second pad connected plays port 2, and so on). The game reads which ports have
-// one for its menus: a VS battle's character select offers a hand on each.
+// one for its menus: a VS battle's character select offers a hand on each. Each holds a Rumble Pak: the game starts a
+// port's motor only when its controller reports a pak (the decomp's src/sys/controller.c), and the runtime's
+// osMotorInit only when it is a Rumble Pak, so without one no pad ever rumbles. The strength is the General tab's.
 ultramodern::input::connected_device_info_t get_connected_device_info(int controller_num) {
     bool unassigned = recompinput::players::get_number_of_assigned_players() == 0;
     if ((unassigned && (controller_num == 0 || (size_t)controller_num < recompinput::get_detected_controller_count())) ||
         recompinput::players::get_player_is_assigned(controller_num)) {
         return ultramodern::input::connected_device_info_t{
             .connected_device = ultramodern::input::Device::Controller,
-            .connected_pak = ultramodern::input::Pak::None,
+            .connected_pak = ultramodern::input::Pak::RumblePak,
         };
     }
 
