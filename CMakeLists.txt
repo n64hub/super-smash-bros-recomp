@@ -1,7 +1,7 @@
 # Super Smash Bros.: Recompiled: the recompiled game (RecompiledFuncs/, from tools/recompile.sh), the patches over it
-# (patches/, PatchesLib), and RecompFrontend's launcher and menus on RT64. The desktop program; with Emscripten
-# (emcmake cmake) the same sources build a page, SmashBrosRecompiled.html, through lib/N64Recomp-browser/frontend, which
-# has no prebuilt shader list or play plans yet (CLAUDE.md).
+# (patches/, PatchesLib), and RecompFrontend's launcher and menus on RT64. The desktop program, and with Emscripten
+# (emcmake cmake; tools/build_web.sh) the page, SmashBrosRecompiled.html, through lib/N64Recomp-browser/frontend
+# (docs/web.md).
 cmake_minimum_required(VERSION 3.20)
 
 if (APPLE)

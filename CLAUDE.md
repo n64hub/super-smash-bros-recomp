@@ -7,7 +7,7 @@ code can't say on its own.
 
 ## What lives where
 
-This repo is the game: its recompilation, the patches over it and the desktop build.
+This repo is the game: its recompilation, the patches over it, the desktop build and its web page.
 
 - `syms/`: the symbols N64Recomp reads, Smash64RecompSyms' (CC0), never edited by hand: every section of the game
   with its ROM offset and VRAM, the functions named as the decomp names them.
@@ -23,8 +23,10 @@ This repo is the game: its recompilation, the patches over it and the desktop bu
   `RecompFrontend` at the commits N64Recomp-browser's web forks are built on, and `N64Recomp-browser` at a release tag.
   The web support every recomp's page shares is developed and documented there; `tools/build_n64recomp.sh` and
   `CMakeLists.txt` apply its `patches/` to the other three, and `CMakeLists.txt` then this game's own changes to them
-  (`runtime-patches/`, its README lists them). There is no web page yet: it needs a prebuilt shader list and play
-  plans, as N64Recomp-browser's docs/porting.md says.
+  (`runtime-patches/`, its README lists them).
+- `docs/web.md`: the web page: `tools/build_web.sh`, its prebuilt shader list (`src/rt64_shaders.txt`,
+  `tools/shader_plan.json`, `tools/record_shaders.sh`), its play plans (`tools/play_plan*.json`) and the survey they
+  share (`tools/shader_survey.js`), which starts any stage as the menus do.
 - Comments beside the code, for how and why: each file's header. Read the header of the file you change and update
   it in the same commit.
 
@@ -35,8 +37,9 @@ This repo is the game: its recompilation, the patches over it and the desktop bu
   or picture from the game.
 - The desktop releases are built where the ROM is, by `tools/release.sh` (its header says how), and published to
   GitHub Releases with their notes in `releases/`.
-- The scope is the game as it plays, plus modern enhancements: each an option with an Original value that plays as the
-  console does, none changing how the game plays. USA only.
+- The scope is the game as it plays, plus what a web page needs (RT64 interpolation to the display's rate, resolution
+  Auto), plus modern enhancements: each an option with an Original value that plays as the console does, none
+  changing how the game plays. USA only.
 - Code from any other Super Smash Bros. project may be read for what it changes, but nothing that isn't the decomp's
   or CC0 is copied.
 - Write for a stranger, in the present tense: nothing about a contributor's machine, servers, paths or accounts, and
