@@ -20,6 +20,9 @@
 # ending and credits, a target broken or a platform boarded, Training Mode's own screens, team battles, Sudden Death,
 # the challenger and unlock screens, and the How to Play movie. Flags follow settings (filtering, HDR, MSAA,
 # upscaling), so a change to one of those defaults means recording again.
+#
+# The boot's last two are a VS battle's that a play of Peach's Castle with items missed after the recording, added by
+# hand to the boot so that every stage has them.
 0f0a4001 00002c3f fcffffff fffcf279 04cb540b
 00504340 00082c3f fcffffff fffdf6fb 0800000b
 00552078 00082c3f fc127e24 fffff3f9 099b1004
@@ -74,6 +77,8 @@ c4112078 0018ac3f fc127e05 ff17f3ff 0ccb540c
 c4112078 0018ac3f fc127e05 ff17f3ff 0803100c
 c4112078 0018ac3f fc127e05 ff17f3ff 0803320c
 c4112078 00182c3f fc327e05 ff17f7ff 0800000c
+0f0a4000 00002c0f fcffffff fffcf279 02aaaa0b
+005041c9 00002c0f fc30fe61 55fef379 02aaaa0b
 section menus
 005041c9 00002c3f fcffffff fffdf6fb 0800000b
 00504241 00002c3f fc309661 552eff7f 019b100b
