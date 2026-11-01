@@ -22,7 +22,8 @@ page's Assign players still picks who plays which port), and every port has a Ru
 as a console does. In a window wider than 4:3 the battles and the stages' backgrounds reach the window's edges, and the
 menus and the HUD stay in the middle 4:3 (Graphics: Aspect Ratio Expand by default, Original for the console's 4:3).
 RT64 draws at the window's resolution, with MSAA, and interpolates to the display's rate. The same game builds into a
-web page that plays in Chrome and Firefox through WebGPU (`docs/web.md`).
+web page that plays in Chrome and Firefox through WebGPU, at
+[n64hub.com/super-smash-bros](https://n64hub.com/super-smash-bros/) (`docs/web.md`).
 
 ## The ROM
 
