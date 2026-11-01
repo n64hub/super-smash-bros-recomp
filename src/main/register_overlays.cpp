@@ -3,8 +3,9 @@
 
 #include "librecomp/overlays.hpp"
 
-// main, engine and goddard, from N64Recomp's section table. The runtime maps main at boot; engine and goddard are
-// mapped when the game DMAs them in (patches/overlays.c).
+// The game's code sections, from N64Recomp's section table: .main, mapped at boot with the 1 MB after ROM 0x1000, and
+// the overlays, each mapped when syDmaLoadOverlay is about to copy it in (ssb_load_overlay, src/game/recomp_api.cpp;
+// CLAUDE.md, How it fits together).
 void ssb::register_overlays() {
     recomp::overlays::overlay_section_table_data_t sections {
         .code_sections = section_table,

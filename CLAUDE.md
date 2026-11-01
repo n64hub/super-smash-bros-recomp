@@ -16,7 +16,8 @@ This repo is the game: its recompilation, the patches over it, the desktop build
 - `patches/` and `patches.toml`: MIPS C against `lib/ssb-decomp-re`'s headers, recompiled into PatchesLib, where a
   patch to the game's C goes (none is needed yet). `ui_funcs.h`, `patch_helpers.h` and `recompui_event_structs.h` are
   RecompFrontend's, which includes the first from the game's `patches/`.
-- `src/`: RecompFrontend's main (`src/main/main.cpp`, with the GameEntry), the natives `us.toml`'s hooks and the
+- `src/`: RecompFrontend's main (`src/main/main.cpp`, with the GameEntry), the code sections and patches it gives the
+  runtime (`src/main/register_overlays.cpp`, `src/main/register_patches.cpp`), the natives `us.toml`'s hooks and the
   patches call (`src/game/recomp_api.cpp`), the libultra functions the runtime lacks (`src/game/libultra.cpp`), the
   settings, and on Windows a stack trace on a crash (`src/main/crash_trace.cpp`).
 - `lib/`: `ssb-decomp-re` (the decomp, for the patches' headers), upstream `rt64`, `N64ModernRuntime` and
