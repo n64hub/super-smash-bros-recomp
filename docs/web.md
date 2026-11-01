@@ -10,7 +10,8 @@ What is the game's own stays here: the `EMSCRIPTEN` branches of `CMakeLists.txt`
 list's header says how to record it again), the play plans (`tools/play_plan.json`, `tools/play_plan_extended.json`,
 `tools/play_plan_soak.json`) and the survey they share (`tools/shader_survey.js`). The rest is N64Recomp-browser's: `docs/porting.md` (WebGPU and
 the shaders, prebuilt shader lists, Emscripten), `docs/playing.md` (playing and measuring a page), `docs/forks.md` and
-`docs/findings.md`.
+`docs/findings.md`. Every play of this game's page is a line in N64Recomp-browser's `plays.jsonl` (game `ssb`), never a
+record here. The page is published at [n64hub.com/super-smash-bros](https://n64hub.com/super-smash-bros/).
 
 ## Build it
 
@@ -88,10 +89,3 @@ the list misses now and then (one in a few plays, built in half a second); each 
 `tools/play_plan_soak.json`'s 18 minutes in Firefox, nine battles one after another: the wasm heap stays at its
 1536 MB, the save's anti-piracy bits at 0 and port 1's Rumble Pak started, and Firefox's GPU process grows as each new
 stage's pipelines are built, then holds at 1.46-1.55 GB for the last ten minutes.
-
-## Its runs
-
-`plays.jsonl` holds every run of the page, failed ones too, one JSON line each as N64Recomp-browser's
-`tools/play_page.mjs --record plays.jsonl --game ssb` writes it (its `docs/playing.md` says what each field is). While
-this repository is private they are kept here, and they move to N64Recomp-browser's own `plays.jsonl` when the page
-is published.
