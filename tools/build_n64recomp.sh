@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Builds the recompilers the runtime pins (lib/N64ModernRuntime/N64Recomp: N64Recomp and RSPRecomp) into
-# build/n64recomp, configuring it the first time; arguments go to that configure. tools/recompile.sh and
-# tools/gen_syms.sh run it first, and a build that is up to date costs nothing.
+# build/n64recomp, configuring it the first time; arguments go to that configure. tools/recompile.sh runs it
+# first, and a build that is up to date costs nothing.
 #
 # It patches lib/ first, with N64Recomp-browser's patches and then the game's own (runtime-patches/apply.cmake, which
 # does nothing once they are in): the code the patched N64Recomp writes uses the patched recomp.h (RECOMP_TAIL_CALL),

@@ -50,16 +50,20 @@ a minute of the game's time on Peach's Castle and runs the battle's clock out to
 `tools/play_plan_extended.json` (about 4 minutes) goes on to Mushroom Kingdom, Link's Break the Targets and the 1P
 Game from Metal Mario's stage. `tools/play_plan_soak.json` (about 18 minutes) is for a leak or OOM hunt: a battle on
 each of the nine VS stages in turn, logging the wasm and JS heaps, the boot count, the anti-piracy bits and port 1's
-Rumble Pak after each. Play them with N64Recomp-browser's `tools/play_page.mjs` (its `docs/playing.md`).
+Rumble Pak after each. `tools/play_plan_pads.json` (about 3 minutes) is the regular play with four stand-in pads,
+N64Recomp-browser's `tools/gamepad_probe.js` as its `--preload`: two with an Xbox pad's id, a DualSense's and a
+Bluetooth Xbox pad's, plugged in at the launcher, ports 2-4 played by theirs, and it fails unless every port has its
+Rumble Pak and the pads of ports 2-4 rumble as the computer's Mario hits them. Play them with N64Recomp-browser's
+`tools/play_page.mjs` (its `docs/playing.md`).
 
 ## The shader list
 
 `src/rt64_shaders.txt` holds 453 shaders: 73 for the boot (the launcher, the opening's start, the title and the main
 menu, and 19 VS battles drew in plays after the recording, added there so that every stage has them), then 54
 sections recorded in headless Chrome at 1256x645 by `tools/record_shaders.sh`, a page load a section, about 75 minutes
-in all: the menus (29), the nine VS stages (92-156 each, most of them in every one, a battle's fighters, items and
-results among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 37-68),
-each fighter's two Bonus Practice stages (17-38), the 1P Game's eight stages on the VS stages (45-89), a team battle,
+in all: the menus (26), the nine VS stages (86-148 each, most of them in every one, a battle's fighters, items and
+results among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 33-63),
+each fighter's two Bonus Practice stages (15-34), the 1P Game's eight stages on the VS stages (45-89), a team battle,
 Sudden Death, Training Mode, the How to Play movie, the 1P Game's Continue, its ending and credits, the challenger
 and unlock message (24-111), and the whole opening movie, which a player who presses Start skips (158).
 Its header says what each section played and what it leaves out.
@@ -71,7 +75,7 @@ In Chrome, uncapped (`?uncapped`, N64Recomp-browser's `docs/playing.md`), the pa
 display's rate: on a desktop GPU standing in for a laptop's integrated graphics (a 3840x2000 canvas) its median is 201
 presents a second (174-244), the longest frame gap 53 ms, with another program drawing on the same GPU, so a quiet
 number is higher; at 1256x645 it is 334-347 with the GPU to itself, held by the uncapped rate, and 300-344 on a busy
-host. Chrome builds all of the list's 309 pipelines behind the launcher, in 27-32 s, so no stage ever waits for
+host. Chrome builds all of the list's 453 pipelines behind the launcher, in 27-32 s, so no stage ever waits for
 one.
 
 Firefox builds a section only when it first draws, with the game waiting: 6.5-8.7 s for the boot's before the

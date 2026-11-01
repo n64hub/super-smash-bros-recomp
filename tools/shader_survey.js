@@ -12,10 +12,11 @@
 //                                   Break the Targets, 29 + fighter Board the Platforms)
 //   clock()                         the game's updates since the scene started (dSYTaskmanUpdateCount, 60 a second), for
 //                                   a plan's ["clock", "clock()", 60]
-//   vs(stage, fighters, ms)         a time battle of four computer players (fighters: four of 0 Mario, 1 Fox, 2 Donkey
+//   vs(stage, fighters, ms, rules)  a time battle of four computer players (fighters: four of 0 Mario, 1 Fox, 2 Donkey
 //                                   Kong, 3 Samus, 4 Luigi, 5 Link, 6 Yoshi, 7 Captain Falcon, 8 Kirby, 9 Pikachu,
 //                                   10 Jigglypuff, 11 Ness) on that stage, items on, as character select and stage
-//                                   select start one; resolves true once it plays
+//                                   select start one; resolves true once it plays. rules: { minutes, teams, humans:
+//                                   the ports (0-3) played by their controllers in place of the computer }
 //   go(scene, prev, ms)             starts that scene as if from prev (a menu that reads where it came from), and
 //                                   resolves true once it plays: a menu, from another menu
 //   timeUp()                        ends the VS battle playing as its clock running out does: its results follow,
@@ -76,27 +77,29 @@
     return (state >= 0x80000000 && state < 0x80800000) ? r8(state + 1) : -1;
   };
   window.clock = () => n64r(UPDATES) | 0;
-  // rules: { minutes, teams: [four of 0 red, 1 blue, 2 green] } for another time limit than 3 or a team battle.
+  // rules: { minutes, teams: [four of 0 red, 1 blue, 2 green], humans: [ports] } for another time limit than 3, a team
+  // battle, or ports their controllers play (HMN on character select: the port's own color and tag).
   window.vs = async (stage, fighters, ms, rules = {}) => {
     const t = TRANSFER;
     w8(t + 0x02, rules.teams ? 1 : 0);  // is_team_battle
     w8(t + 0x03, 1);            // game_rules: time
     w8(t + 0x06, rules.minutes || 3);  // time_limit, minutes
+    const humans = rules.humans || [];
     for (let i = 0; i < 4; i++) {
-      const p = t + 0x20 + 0x74 * i;
+      const p = t + 0x20 + 0x74 * i, man = humans.includes(i);
       w8(p + 0x00, 9);          // CPU level
-      w8(p + 0x02, 1);          // pkind: the computer
+      w8(p + 0x02, man ? 0 : 1);  // pkind: the port's controller, or the computer
       w8(p + 0x03, fighters[i]);
       w8(p + 0x04, rules.teams ? rules.teams[i] : 0);  // team
       w8(p + 0x05, i);          // player
       w8(p + 0x06, 0);          // costume
       w8(p + 0x07, 0);          // shade
-      w8(p + 0x08, 4);          // color: a computer's
+      w8(p + 0x08, man ? i : 4);  // color: the port's, or a computer's
       w8(p + 0x09, 1);          // is_single_stockicon, for a time battle
-      w8(p + 0x0A, 4);          // tag: a computer's
+      w8(p + 0x0A, man ? i : 4);  // tag: P1-P4, or CP
     }
-    w8(t + 0x04, 0);            // pl_count
-    w8(t + 0x05, 4);            // cp_count
+    w8(t + 0x04, humans.length);      // pl_count
+    w8(t + 0x05, 4 - humans.length);  // cp_count
     w8(GKIND, stage);
     start(22, 16);
     return until(() => window.scene() === 22 && r8(TRANSFER + 1) === stage && n64r(BATTLE_STATE) === TRANSFER, ms);
