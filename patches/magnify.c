@@ -17,9 +17,11 @@
 //   frame's side. A scissor aligned to a side keeps its numbers inside the 4:3 view, where one aligned to the centre
 //   would reach past it: RT64 widens the stage only while its scissor covers every scissor the framebuffer has drawn
 //   with (hud.c), so a centred scissor past 4:3 put the stage back in the middle 4:3 on every frame with a bubble.
+//   The frame itself is drawn under the battle viewport's scissor moved to the HUD's frame's sides
+//   (magnify_push_scissor, hud.c's), since the game's own, 10 to 310 in the 4:3 frame, cut it at the 4:3 frame's side.
 // - ifCommonPlayerMagnifyProcDisplay draws its ring, a model under the magnifying camera's orthographic projection
 //   through the battle's viewport, which RT64 widens keeping the projection's units at the 4:3 frame's pixels: the
-//   ring at the bubble's own position lands at the widened place as it is.
+//   ring at the bubble's own position lands at the widened place as it is, under magnify_push_scissor's scissor too.
 //
 // The arrows the game shows at the 4:3 view's sides while a fighter is past one (ifCommonPlayerArrows*ProcDisplay),
 // drawn under their own orthographic camera the same way, move out by the same distance as the bubble.
