@@ -542,8 +542,12 @@ int main(int argc, char** argv) {
             // transition out of VS mode's results (and the debug cube's), where lbTransitionSetupTransition copies the
             // frame on the screen into a heap and turns it as a page; the results screen holds still by then, so a
             // frame a list or two old is the same picture. Without render to RAM the page would turn black, and with
-            // the exact copy every list waits for the GPU's readback. It writes to a framebuffer only to clear them to
-            // black before the congratulations screen's first list (mncongra.c). The desktop build keeps RT64's default.
+            // the exact copy every list waits for the GPU's readback. The CPU writes to a framebuffer to clear them to
+            // black before the congratulations screen's first list (mncongra.c), and in battles to the z buffer, which a
+            // camera clears as a colour image (func_8001663C's fill, the magnify bubble's frame): it starts ten
+            // rows before gSYZBuffer, over the scene manager's data, rows the scissor keeps the RDP off. RT64 reports those writes on the console and
+            // keeps what the CPU wrote, so the late copy never lands over the game's own variables. The desktop build
+            // keeps RT64's default.
 #ifdef __EMSCRIPTEN__
             recompui::renderer::set_render_to_ram_late(true);
 #endif
