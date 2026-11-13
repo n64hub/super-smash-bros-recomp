@@ -49,3 +49,30 @@ extern "C" void recomp_get_aspect_ratio(uint8_t* rdram, recomp_context* ctx) {
     }
     _return(ctx, std::max(static_cast<float>(width) / height, original));
 }
+
+// recomp_get_hud_aspect_ratio(original), a native the patches call (patches/syms.ld): the aspect ratio of the frame
+// RT64 aligns the HUD to (gEXSetRectAlign's G_EX_ORIGIN_LEFT and G_EX_ORIGIN_RIGHT), the picture's narrowed to HUD
+// Placement's (original for Original, 16:9 for 16:9, the picture's for Full), as RecompFrontend sets RT64's
+// extended aspect ratio from it (patches/magnify.c).
+extern "C" void recomp_get_hud_aspect_ratio(uint8_t* rdram, recomp_context* ctx) {
+    float original = _arg<0, float>(rdram, ctx);
+    int width, height;
+    recompui::get_window_size(width, height);
+    const ultramodern::renderer::GraphicsConfig& config = ultramodern::renderer::get_graphics_config();
+    if (config.ar_option != ultramodern::renderer::AspectRatio::Expand || height <= 0) {
+        _return(ctx, original);
+        return;
+    }
+    float picture = std::max(static_cast<float>(width) / height, original);
+    switch (config.hr_option) {
+    case ultramodern::renderer::HUDRatioMode::Clamp16x9:
+        _return(ctx, std::clamp(16.0f / 9.0f, original, picture));
+        return;
+    case ultramodern::renderer::HUDRatioMode::Full:
+        _return(ctx, picture);
+        return;
+    default:
+        _return(ctx, original);
+        return;
+    }
+}
