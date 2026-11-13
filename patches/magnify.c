@@ -37,10 +37,25 @@
 
 // The decomp's bubble state (src/if/ifcommon.c), declared in no header.
 extern IFPlayerMagnify sIFCommonPlayerMagnifyInterface[GMCOMMON_PLAYERS_MAX];
+extern u8 dIFCommonPlayerMagnifyColorsR[];
+extern u8 dIFCommonPlayerMagnifyColorsG[];
+extern u8 dIFCommonPlayerMagnifyColorsB[];
 
 // How far the HUD's sides lie past the 4:3 frame's, in the 4:3 frame's pixels.
 static f32 magnify_side_shift(void) {
     return (MAGNIFY_SCREEN_WIDTH / 2) * ((recomp_get_hud_aspect_ratio(4.0F / 3.0F) / (4.0F / 3.0F)) - 1.0F);
+}
+
+// The battle viewport's scissor (10 to 310 in the 4:3 frame) at the same margins from the HUD's frame's sides, as hud.c
+// gives the HUD: the bubble's frame and ring are drawn under it, since the game's own cuts them at the 4:3 frame's.
+static Gfx* magnify_push_scissor(Gfx* dl) {
+    // RT64 reads its extended commands only in a list that turns them on (hud.c).
+    gEXEnable(dl++);
+    gEXPushScissor(dl++);
+    gEXSetScissor(dl++, G_SC_NON_INTERLACE, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT, gGMCameraStruct.viewport_ulx,
+                  gGMCameraStruct.viewport_uly, gGMCameraStruct.viewport_lrx - MAGNIFY_SCREEN_WIDTH,
+                  gGMCameraStruct.viewport_lry);
+    return dl;
 }
 
 // The decomp's ifCommonPlayerMagnifyGetPosition (src/if/ifcommon.c), its left and right edges the HUD's frame's.
@@ -175,9 +190,9 @@ RECOMP_PATCH void ifCommonPlayerMagnifyUpdateViewport(Gfx** dls, FTStruct* fp) {
 
         scale = (16.0F * gIFCommonPlayerInterface.magnify_scale);
 
+        dls[0] = magnify_push_scissor(dls[0]);
+
         if (origin != G_EX_ORIGIN_NONE) {
-            // RT64 reads its extended commands only in a list that turns them on (hud.c).
-            gEXEnable(dls[0]++);
             gEXSetRectAlign(dls[0]++, origin, origin, -origin_x * 4, 0, -origin_x * 4, 0);
         }
         ifCommonPlayerMagnifyUpdateRender(dls, ifmag->color_id, magnify_x - scale, magnify_y - scale);
@@ -187,6 +202,7 @@ RECOMP_PATCH void ifCommonPlayerMagnifyUpdateViewport(Gfx** dls, FTStruct* fp) {
         if (origin != G_EX_ORIGIN_NONE) {
             gEXSetRectAlign(dl++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
         }
+        gEXPopScissor(dl++);
         scale = (18.0F * gIFCommonPlayerInterface.magnify_scale);
 
         magnify_x -= (scale / 2);
@@ -224,6 +240,48 @@ RECOMP_PATCH void ifCommonPlayerMagnifyUpdateViewport(Gfx** dls, FTStruct* fp) {
             gDPSetScissor(dl++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
         }
         dls[0] = dl;
+    }
+}
+
+// The decomp's ifCommonPlayerMagnifyProcDisplay (src/if/ifcommon.c), its ring drawn under magnify_push_scissor's
+// scissor.
+RECOMP_PATCH void ifCommonPlayerMagnifyProcDisplay(FTStruct* fp) {
+    GObj* interface_gobj;
+    DObj* dobj;
+    IFPlayerMagnify* ifmag;
+    CObj* cobj;
+
+    if (gIFCommonPlayerInterface.is_magnify_display != FALSE) {
+        ifmag = &sIFCommonPlayerMagnifyInterface[fp->player];
+
+        interface_gobj = ifmag->interface_gobj;
+
+        dobj = DObjGetStruct(interface_gobj);
+
+        dobj->translate.vec.f.x = ifmag->pos.x;
+        dobj->translate.vec.f.y = ifmag->pos.y;
+
+        dobj->rotate.vec.f.z = syUtilsArcTan2(fp->magnify_pos.y, fp->magnify_pos.x) - F_CST_DTOR32(90.0F);
+
+        dobj->scale.vec.f.x = dobj->scale.vec.f.y = gIFCommonPlayerInterface.magnify_scale * 0.5F;
+
+        cobj = CObjGetStruct(gGMCameraGObj);
+
+        gSPViewport(gSYTaskmanDLHeads[0]++, &cobj->viewport);
+        gDPSetScissor(gSYTaskmanDLHeads[0]++, G_SC_NON_INTERLACE, gGMCameraStruct.viewport_ulx,
+                      gGMCameraStruct.viewport_uly, gGMCameraStruct.viewport_lrx, gGMCameraStruct.viewport_lry);
+        gSYTaskmanDLHeads[0] = magnify_push_scissor(gSYTaskmanDLHeads[0]);
+        gSPMatrix(gSYTaskmanDLHeads[0]++, &CObjGetStruct(gGCCurrentCamera)->xobjs[1]->mtx,
+                  G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+        gSPClearGeometryMode(gSYTaskmanDLHeads[0]++, G_ZBUFFER);
+        gDPPipeSync(gSYTaskmanDLHeads[0]++);
+        gDPSetRenderMode(gSYTaskmanDLHeads[0]++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
+        gDPSetAlphaCompare(gSYTaskmanDLHeads[0]++, G_AC_NONE);
+        gDPSetPrimColor(gSYTaskmanDLHeads[0]++, 0, 0, dIFCommonPlayerMagnifyColorsR[ifmag->color_id],
+                        dIFCommonPlayerMagnifyColorsG[ifmag->color_id], dIFCommonPlayerMagnifyColorsB[ifmag->color_id],
+                        0xFF);
+        gcDrawDObjDLHead0(interface_gobj);
+        gEXPopScissor(gSYTaskmanDLHeads[0]++);
     }
 }
 
