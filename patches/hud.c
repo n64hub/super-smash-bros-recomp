@@ -107,6 +107,15 @@ static void hud_align(s32 origin) {
     // RT64 reads its extended commands only in a list that turns them on, and turns them off at each list's start.
     gEXEnable(gSYTaskmanDLHeads[0]++);
     gEXSetRectAlign(gSYTaskmanDLHeads[0]++, origin, origin, offset, 0, offset, 0);
+    // The interface camera's scissor is the 4:3 frame's, which would cut what lies past it: the whole picture's, from
+    // its left side to its right, until hud_unalign gives the camera's back.
+    gEXPushScissor(gSYTaskmanDLHeads[0]++);
+    gEXSetScissor(gSYTaskmanDLHeads[0]++, G_SC_NON_INTERLACE, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT, 0, 0, 0, 240);
+}
+
+static void hud_unalign(void) {
+    gEXSetRectAlign(gSYTaskmanDLHeads[0]++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
+    gEXPopScissor(gSYTaskmanDLHeads[0]++);
 }
 
 // The decomp's gcCaptureTaggedGObjs (src/sys/objdisplay.c), with the HUD's link drawn at the picture's sides.
@@ -132,7 +141,7 @@ RECOMP_PATCH void gcCaptureTaggedGObjs(GObj* camera_gobj, s32 link_id, sb32 is_t
                 current_gobj->frame_draw_last = dSYTaskmanFrameCount;
 
                 if (origin != HUD_NO_ALIGN) {
-                    gEXSetRectAlign(gSYTaskmanDLHeads[0]++, G_EX_ORIGIN_NONE, G_EX_ORIGIN_NONE, 0, 0, 0, 0);
+                    hud_unalign();
                 }
             }
         }
