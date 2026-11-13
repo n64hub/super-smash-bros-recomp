@@ -1,1 +1,0 @@
-- In a window wider than 4:3, a fighter knocked past the picture's edge shows in its magnifying bubble at that side of the picture, where the bubble stayed at the middle 4:3's edge.
