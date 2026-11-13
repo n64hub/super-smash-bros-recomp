@@ -539,9 +539,10 @@ int main(int argc, char** argv) {
     ultramodern::renderer::callbacks_t renderer_callbacks{
         .create_render_context = [](uint8_t* rdram, ultramodern::renderer::WindowHandle window_handle, bool developer_mode) {
             // On the page each list's copy to RAM lands a list late: the game's CPU reads a frame it drew only for the
-            // transition out of VS mode's results (and the debug cube's), where lbTransitionSetupTransition copies the
-            // frame on the screen into a heap and turns it as a page; the results screen holds still by then, so a
-            // frame a list or two old is the same picture. Without render to RAM the page would turn black, and with
+            // transition into VS mode's results (and the debug cube's), where the results screen's setup calls
+            // lbTransitionSetupTransition, which copies the frame on the screen into a heap and turns it as a page: the
+            // battle's last frame, which holds still on its end by then, so a frame a list or two old is the same
+            // picture. Without render to RAM the page would turn black, and with
             // the exact copy every list waits for the GPU's readback. The CPU writes to a framebuffer to clear them to
             // black before the congratulations screen's first list (mncongra.c), and in battles to the z buffer, which a
             // camera clears as a colour image (func_8001663C's fill, the magnify bubble's frame): it starts ten
