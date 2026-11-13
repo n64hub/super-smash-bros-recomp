@@ -1,7 +1,7 @@
 // The battle HUD at the wide picture's sides (RT64's Aspect Ratio Expand), where the game draws it in its 4:3 frame:
 // each player's damage and stocks spread across the picture's width as they are across the 4:3 one, so port 1's sits
 // near its left edge and port 4's near its right, and the rest of the HUD (the timer, the Bonus Practices' targets or
-// platforms and their timer, the 1P Game's enemy stocks, Training Mode's displays) at the side it is drawn on. The
+// platforms and their timer, the 1P Game's enemy stocks) at the side it is drawn on. The
 // sides are those of the picture RecompFrontend's HUD Placement gives the HUD (16:9 by default); at 4:3, or with Aspect
 // Ratio Original, RT64 places everything as the game does.
 //
@@ -17,6 +17,8 @@
 // - The players' name tags and the arrows over items above the screen: none, since they follow the 3D.
 // - Anything else on the link: by the middle of its visible sprites, left of 140 at the left side, right of 180 at the
 //   right, and in between where the game draws it (GO!, GAME SET, the countdown, the announcements).
+// - Training Mode's readout across the top and its menu: none, where the game draws them, since the readout's labels
+//   are one display and its values others, which taken to the sides would land on each other's labels.
 //
 // The pause menu (link 24) and the other menus stay in the middle 4:3.
 
@@ -98,6 +100,11 @@ static s32 hud_origin(GObj* gobj) {
         return HUD_ORIGIN_AT(gIFCommonPlayerInterface.player_pos_x[ifGetPlayer(gobj)]);
     }
     if ((gobj->proc_display == ifCommonPlayerTagProcDisplay) || (gobj->proc_display == ifCommonItemArrowProcDisplay)) {
+        return HUD_NO_ALIGN;
+    }
+    // Training Mode's readout across the top (its labels one display, each value another) and its menu stay in the
+    // 4:3 frame: a value taken to a side would land on another value's label.
+    if (gSCManagerSceneData.scene_curr == nSCKind1PTrainingMode) {
         return HUD_NO_ALIGN;
     }
     middle = hud_sobjs_middle(gobj);
