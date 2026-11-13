@@ -1,9 +1,14 @@
-// The natives us.toml's hooks call, each from the generated C of the game function it hooks.
+// The natives us.toml's hooks call, each from the generated C of the game function it hooks, and those the patches call
+// (patches/syms.ld gives each a dummy address that N64Recomp turns into a call by name).
 
 #include "recomp.h"
 #include "librecomp/overlays.hpp"
 #include "librecomp/game.hpp"
+#include "librecomp/helpers.hpp"
+#include "ultramodern/config.hpp"
+#include "recompui/recompui.h"
 
+#include <algorithm>
 #include <chrono>
 
 // The hook at syDmaLoadOverlay's start (us.toml): the code sections in the overlay's stretch of ROM are now at its
@@ -29,4 +34,18 @@ extern "C" void ssb_spin_yield(uint8_t* rdram, int getter) {
         yield_self_1ms(rdram);
     }
     last_call[getter] = clock::now();
+}
+
+// recomp_get_aspect_ratio(original), a native the patches call (patches/syms.ld): the picture's aspect ratio, the
+// window's with Aspect Ratio Expand (never narrower than original), else original (patches/cull.c).
+extern "C" void recomp_get_aspect_ratio(uint8_t* rdram, recomp_context* ctx) {
+    float original = _arg<0, float>(rdram, ctx);
+    int width, height;
+    recompui::get_window_size(width, height);
+    if (ultramodern::renderer::get_graphics_config().ar_option != ultramodern::renderer::AspectRatio::Expand ||
+        height <= 0) {
+        _return(ctx, original);
+        return;
+    }
+    _return(ctx, std::max(static_cast<float>(width) / height, original));
 }

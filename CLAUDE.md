@@ -14,7 +14,8 @@ This repo is the game: its recompilation, the patches over it, the desktop build
 - `us.toml`: N64Recomp's configuration, with the game's instruction patches and hooks; `tools/recompile.sh` writes
   `RecompiledFuncs/` with it, and the audio microcode with `n_aspMain.us.toml`.
 - `patches/` and `patches.toml`: MIPS C against `lib/ssb-decomp-re`'s headers, recompiled into PatchesLib, where a
-  patch to the game's C goes (none is needed yet). `ui_funcs.h`, `patch_helpers.h` and `recompui_event_structs.h` are
+  patch to the game's C goes (`hud.c`, the battle HUD at the wide picture's sides; `cull.c`, the fighters drawn
+  across the wide picture). `ui_funcs.h`, `patch_helpers.h` and `recompui_event_structs.h` are
   RecompFrontend's, which includes the first from the game's `patches/`.
 - `src/`: RecompFrontend's main (`src/main/main.cpp`, with the GameEntry), the code sections and patches it gives the
   runtime (`src/main/register_overlays.cpp`, `src/main/register_patches.cpp`), the natives `us.toml`'s hooks and the
@@ -90,7 +91,9 @@ This repo is the game: its recompilation, the patches over it, the desktop build
   a port without a pad can't move its hand, and the panel's HMN button sets it to CP or NA.
 - **Widescreen.** RecompFrontend's Graphics tab defaults to Aspect Ratio Expand, HUD Placement 16:9, Resolution Auto
   and Framerate Display. RT64 widens the 3D, and the stages' backgrounds, which the game draws as part of the 3D, reach
-  the window's edges with it, so no patch is needed: the menus and the HUD stay in the middle 4:3.
+  the window's edges with it. The battle HUD is drawn in the 4:3 frame, so `patches/hud.c` anchors it to the sides of
+  the picture HUD Placement gives it with RT64's rectangle alignment, one display at a time where the game calls its
+  HUD's displays (its header says how); the menus stay in the middle 4:3.
 - **Testing.** `--boot` starts the game from the launcher's first frame once the ROM is stored. A test that posts
   `WM_KEYDOWN`/`WM_KEYUP` to the window drives port 1; another port needs a pad, real or virtual (SDL's
   `SDL_JoystickAttachVirtual` makes one recompinput takes as a pad).

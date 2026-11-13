@@ -20,4 +20,8 @@
 #include <common.h>
 #include <ssb_types.h>
 
+// The picture's aspect ratio: the window's with Aspect Ratio Expand (never narrower than original), else original
+// (src/game/recomp_api.cpp).
+f32 recomp_get_aspect_ratio(f32 original);
+
 #endif

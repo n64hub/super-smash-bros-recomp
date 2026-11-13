@@ -79,6 +79,10 @@ number is higher; at 1256x645 it is 334-347 with the GPU to itself, held by the 
 host. Chrome builds all of the list's 453 pipelines behind the launcher, in 27-32 s, so no stage ever waits for
 one.
 
+The page copies the game's frames to RAM a list late, not RT64's exact copy, which waits for the GPU's readback each
+list: the game's CPU reads a frame only for the transition into VS mode's results, the battle's last frame, which holds
+still by then (`src/main/main.cpp`, `create_render_context`, says which code reads it).
+
 Firefox builds a section only when it first draws, with the game waiting: 6.5-8.7 s for the boot's before the
 opening, then 9-12 s as the first battle starts, whose frames draw shaders from the first few VS stages' sections
 (most of a battle's shaders are in every one), and under a second for each stage after that. Its plays read 165-200
