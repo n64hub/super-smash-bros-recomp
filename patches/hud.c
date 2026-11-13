@@ -27,6 +27,8 @@
 #include <sys/taskman.h>
 #include <if/interface.h>
 #include <if/ifcommon.h>
+#include <gm/gmcamera.h>
+#include <sc/scene.h>
 
 #define HUD_DL_LINK 23
 #define HUD_SCREEN_WIDTH 320
@@ -72,6 +74,20 @@ static sb32 hud_has_process(GObj* gobj, void (*func)(GObj*)) {
     return FALSE;
 }
 
+// Whether the scene is a battle, the only scenes whose link 23 is the HUD.
+static sb32 hud_in_battle(void) {
+    switch (gSCManagerSceneData.scene_curr) {
+    case nSCKindVSBattle:
+    case nSCKind1PGame:
+    case nSCKind1PBonusStage:
+    case nSCKind1PTrainingMode:
+    case nSCKindAutoDemo:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
 // Where a GObj on the HUD's link is anchored: an origin, or HUD_NO_ALIGN.
 static s32 hud_origin(GObj* gobj) {
     s32 middle;
@@ -107,10 +123,14 @@ static void hud_align(s32 origin) {
     // RT64 reads its extended commands only in a list that turns them on, and turns them off at each list's start.
     gEXEnable(gSYTaskmanDLHeads[0]++);
     gEXSetRectAlign(gSYTaskmanDLHeads[0]++, origin, origin, offset, 0, offset, 0);
-    // The interface camera's scissor is the 4:3 frame's, which would cut what lies past it: the whole picture's, from
-    // its left side to its right, until hud_unalign gives the camera's back.
+    // The interface camera's scissor is the battle viewport's (10 to 310 in the 4:3 frame), which would cut what lies
+    // past the 4:3 frame: the same margins from the wide picture's sides, until hud_unalign gives the camera's back.
+    // Not the whole picture's: RT64 widens the 3D only while its scissor covers every scissor the framebuffer has
+    // drawn with, so a HUD scissor from 0 to 320 would leave the stage in the middle 4:3.
     gEXPushScissor(gSYTaskmanDLHeads[0]++);
-    gEXSetScissor(gSYTaskmanDLHeads[0]++, G_SC_NON_INTERLACE, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT, 0, 0, 0, 240);
+    gEXSetScissor(gSYTaskmanDLHeads[0]++, G_SC_NON_INTERLACE, G_EX_ORIGIN_LEFT, G_EX_ORIGIN_RIGHT,
+                  gGMCameraStruct.viewport_ulx, gGMCameraStruct.viewport_uly,
+                  gGMCameraStruct.viewport_lrx - HUD_SCREEN_WIDTH, gGMCameraStruct.viewport_lry);
 }
 
 static void hud_unalign(void) {
@@ -127,7 +147,7 @@ RECOMP_PATCH void gcCaptureTaggedGObjs(GObj* camera_gobj, s32 link_id, sb32 is_t
         if (!(current_gobj->flags & GOBJ_FLAG_HIDDEN)) {
             if (((is_tag_mask_or_id == 0) && (camera_gobj->camera_tag & current_gobj->camera_tag)) ||
                 ((is_tag_mask_or_id == 1) && (camera_gobj->camera_tag == current_gobj->camera_tag))) {
-                origin = (link_id == HUD_DL_LINK) ? hud_origin(current_gobj) : HUD_NO_ALIGN;
+                origin = ((link_id == HUD_DL_LINK) && hud_in_battle()) ? hud_origin(current_gobj) : HUD_NO_ALIGN;
 
                 if (origin != HUD_NO_ALIGN) {
                     hud_align(origin);
