@@ -21,8 +21,8 @@ pads were connected, and the keyboard plays port 1, so up to four people play wi
 page's Assign players still picks who plays which port), and every port has a Rumble Pak, which the game starts on a pad
 as a console does. In a window wider than 4:3 the battles and the stages' backgrounds reach the window's edges, the
 battle HUD (each player's damage and stocks, the timer, the Bonus Practices' targets) spreads to the sides of the
-picture HUD Placement gives it, and the menus stay in the middle 4:3 (Graphics: Aspect Ratio Expand by default,
-Original for the console's 4:3).
+picture HUD Placement gives it, a fighter past the picture's edge shows in its magnifying bubble at those sides, and
+the menus stay in the middle 4:3 (Graphics: Aspect Ratio Expand by default, Original for the console's 4:3).
 RT64 draws at the window's resolution, with MSAA, and interpolates to the display's rate. The same game builds into a
 web page that plays in Chrome and Firefox through WebGPU, at
 [n64hub.com/super-smash-bros](https://n64hub.com/super-smash-bros/) (`docs/web.md`).

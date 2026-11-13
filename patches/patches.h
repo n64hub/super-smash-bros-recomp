@@ -24,4 +24,8 @@
 // (src/game/recomp_api.cpp).
 f32 recomp_get_aspect_ratio(f32 original);
 
+// The aspect ratio of the frame RT64 aligns the HUD to, the picture's narrowed to HUD Placement's
+// (src/game/recomp_api.cpp).
+f32 recomp_get_hud_aspect_ratio(f32 original);
+
 #endif
