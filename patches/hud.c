@@ -145,10 +145,15 @@ static void hud_unalign(void) {
     gEXPopScissor(gSYTaskmanDLHeads[0]++);
 }
 
+// Whether the HUD's link is drawing, for cull.c's gmCameraCheckTargetInBounds.
+sb32 cull_hud_drawing = FALSE;
+
 // The decomp's gcCaptureTaggedGObjs (src/sys/objdisplay.c), with the HUD's link drawn at the picture's sides.
 RECOMP_PATCH void gcCaptureTaggedGObjs(GObj* camera_gobj, s32 link_id, sb32 is_tag_mask_or_id) {
     GObj* current_gobj = gGCCommonDLLinks[link_id];
     s32 origin;
+
+    cull_hud_drawing = (link_id == HUD_DL_LINK);
 
     while (current_gobj != NULL) {
         if (!(current_gobj->flags & GOBJ_FLAG_HIDDEN)) {
@@ -174,4 +179,5 @@ RECOMP_PATCH void gcCaptureTaggedGObjs(GObj* camera_gobj, s32 link_id, sb32 is_t
         }
         current_gobj = current_gobj->dl_link_next;
     }
+    cull_hud_drawing = FALSE;
 }
