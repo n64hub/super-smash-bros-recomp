@@ -1,0 +1,1 @@
+- In a window wider than 4:3, the battle HUD (each player's damage and stocks, the timer, the Bonus Practices' targets) spreads to the window's sides, where it was held in the middle 4:3.
