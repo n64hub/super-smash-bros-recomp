@@ -58,15 +58,17 @@ Rumble Pak and the pads of ports 2-4 rumble as the computer's Mario hits them. P
 
 ## The shader list
 
-`src/rt64_shaders.txt` holds 453 shaders: 73 for the boot (the launcher, the opening's start, the title and the main
+`src/rt64_shaders.txt` holds 531 shaders: 82 for the boot (the launcher, the opening's start, the title and the main
 menu, and 19 VS battles drew in plays after the recording, added there so that every stage has them), then 54
 sections recorded in headless Chrome at 1256x645 by `tools/record_shaders.sh`, a page load a section, about 75 minutes
-in all: the menus (26), the nine VS stages (86-148 each, most of them in every one, a battle's fighters, items and
-results among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 33-63),
-each fighter's two Bonus Practice stages (15-34), the 1P Game's eight stages on the VS stages (45-89), a team battle,
+in all: the menus (56), the nine VS stages (94-158 each, most of them in every one, a battle's fighters, items and
+results among them), the 1P Game's own four (Meta Crystal, Race to the Finish, Duel Zone, Final Destination, 40-80),
+each fighter's two Bonus Practice stages (22-41), the 1P Game's eight stages on the VS stages (61-111), a team battle,
 Sudden Death, Training Mode, the How to Play movie, the 1P Game's Continue, its ending and credits, the challenger
-and unlock message (24-111), and the whole opening movie, which a player who presses Start skips (158).
-Its header says what each section played and what it leaves out.
+and unlock message (32-123), and the whole opening movie, which a player who presses Start skips (163). The 2D screens
+scaled to the window (`src/game/screen.cpp`) draw their rectangles point sampled, so most sections hold both a
+bilinear and a point-sampled shader for the same picture. The list's header says what each section played and what it leaves
+out.
 
 
 ## How it plays
@@ -75,8 +77,8 @@ In Chrome, uncapped (`?uncapped`, N64Recomp-browser's `docs/playing.md`), the pa
 display's rate: on a desktop GPU standing in for a laptop's integrated graphics (a 3840x2000 canvas) its median is 201
 presents a second (174-244), the longest frame gap 53 ms, with another program drawing on the same GPU, so a quiet
 number is higher; at 1256x645 it is 334-347 with the GPU to itself, held by the uncapped rate, and 300-344 on a busy
-host. Chrome builds all of the list's 453 pipelines behind the launcher, in 27-32 s, so no stage ever waits for
-one.
+host. Chrome builds all of the list's 531 shaders, 360 pipelines, behind the launcher, in 17 s headless on a busy
+host, so no stage ever waits for one.
 
 The page copies the game's frames to RAM a list late, not RT64's exact copy, which waits for the GPU's readback each
 list: the game's CPU reads a frame only for the transition into VS mode's results, the battle's last frame, which holds
