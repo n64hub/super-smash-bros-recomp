@@ -95,7 +95,10 @@ This repo is the game: its recompilation, the patches over it, the desktop build
   the window's edges with it. The battle HUD is drawn in the 4:3 frame, so `patches/hud.c` anchors it to the sides of
   the picture HUD Placement gives it with RT64's rectangle alignment, one display at a time where the game calls its
   HUD's displays (its header says how). `patches/magnify.c` puts a fighter's magnifying bubble, and the arrows
-  beside it, at those sides too, each piece aligned to the side it is past; the menus stay in the middle 4:3.
+  beside it, at those sides too, each piece aligned to the side it is past. The title, the menus and the screens
+  between battles draw inside a 10-pixel border of the game's own, so `src/game/screen.cpp` scales each of their
+  frames until that border is past the window's top and bottom (or its sides, in a window narrower than 4:3), their
+  shape kept and the rest black, as its header says.
 - **Testing.** `--boot` starts the game from the launcher's first frame once the ROM is stored. A test that posts
   `WM_KEYDOWN`/`WM_KEYUP` to the window drives port 1; another port needs a pad, real or virtual (SDL's
   `SDL_JoystickAttachVirtual` makes one recompinput takes as a pad).
