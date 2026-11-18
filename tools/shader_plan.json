@@ -28,7 +28,8 @@
   "end starts it (go(28, 61)), to the title. Each but the last starts at VS Mode's character select, as the castle's",
   "does. Not recorded: a target broken or a platform boarded, the game over, and the other challengers (Luigi, Ness,",
   "Jigglypuff), whose battles draw as their VS stages do. Flags follow settings (filtering, HDR, MSAA, upscaling), so a",
-  "change to one of those defaults means recording again."
+  "change to one of those defaults means recording again, and so does a change to what the scaled 2D screens draw",
+  "(src/game/screen.cpp): their rectangles are point sampled, each a shader of its own."
  ],
  "load": [
   [
