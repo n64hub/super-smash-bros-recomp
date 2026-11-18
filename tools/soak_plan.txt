@@ -1,0 +1,78 @@
+# The desktop build's soak plan, for frame_dump.mjs --soak 150: one round through the game's modes and scenes, a
+# player's keys and random ones, which fails on a crash, an exit, or a picture standing still for 10 s. A round plays
+# the boot and the opening to the title with Start (Enter), the main menu, VS Mode with the stick (S) and A (Space),
+# and character select, then a VS battle of four computer players (Mario, Link, Pikachu, Ness) on Peach's Castle with
+# items, started as character select and stage select start one, 35 s of it with random keys, its clock run out and
+# its results (after Sudden Death if it ties), and Start back to character select. From there it plays Bonus 1
+# Practice (Break the Targets) as Mario, 20 s of random keys, left as a player leaves it (Start, then A, B, Z and R
+# held together) to its character select, and then the 1P Game's first stage (Link) as Mario, its intro and the
+# battle with random keys to the end. Start and Escape are never random keys: a pause or the recomp's menu would stand
+# still. Training Mode is left out: A, B, Z and R don't end it, only its pause menu does.
+#
+# The writes are tools/shader_survey.js's vs(), bonus() and spgame() as 32-bit words, each word's other bytes as the
+# game holds them at character select. The scene is gSCManagerSceneData.scene_curr (0x800A4AD0, its high byte; 1 the
+# title, 7 the main menu, 9 VS Mode, 16 VS character select, 19 Bonus 1's character select, 22 a VS battle, 24 its
+# results, 52 the 1P Game, 53 a Bonus stage), the next scene loads once sSYTaskmanStatus (0x800465D0) is 1, the battle
+# state's pointer is 0x800A50E8 (0x800A4D08 a VS battle's, 0x800A4B18 the 1P Game's) and its second byte the stage
+# (0 Peach's Castle, 4 the 1P Game's Link stage, 17 Mario's Break the Targets), the main menu's cursor is 0x80132C88.
+1 until 0x800A4AD0 0xFF000000 0x01000000 90 Enter
+3 until 0x800A4AD0 0xFF000000 0x07000000 30 Enter
+5 until 0x80132C88 0xFFFFFFFF 0x00000001 15 S
+5.5 until 0x800A4AD0 0xFF000000 0x09000000 15 Space
+7.5 until 0x800A4AD0 0xFF000000 0x10000000 15 Space
+9.5 shot character_select
+9.6 poke 0x800A4D08 0x00000001
+9.6 poke 0x800A4D0C 0x00040300
+9.6 poke 0x800A4D28 0x09090100
+9.6 poke 0x800A4D2C 0x00000000
+9.6 poke 0x800A4D30 0x04010400
+9.6 poke 0x800A4D9C 0x09090105
+9.6 poke 0x800A4DA0 0x00010000
+9.6 poke 0x800A4DA4 0x04010400
+9.6 poke 0x800A4E10 0x09090109
+9.6 poke 0x800A4E14 0x00020000
+9.6 poke 0x800A4E18 0x04010400
+9.6 poke 0x800A4E84 0x0909010B
+9.6 poke 0x800A4E88 0x00030000
+9.6 poke 0x800A4E8C 0x04010400
+9.6 poke 0x800A4ADC 0x1C1C1C00
+9.6 poke 0x800A4AD0 0x16100707
+9.6 poke 0x800465D0 0x00000001
+9.7 until 0x800A50E8 0xFFFFFFFF 0x800A4D08 25
+10 random Space,Shift,W,A,S,D,Q,E,R,Up,Down,Left,Right
+30 shot vs_battle
+45 random off
+45.5 poke 0x800A4D1C 0x00000002
+46 until 0x800A4AD0 0xFF000000 0x18000000 60 Space
+49 shot results
+49.5 until 0x800A4AD0 0xFF000000 0x10000000 30 Enter
+51 poke 0x800A4AE0 0x00000000
+51 poke 0x800A4B08 0x0000001C
+51 poke 0x800A4AD0 0x35130707
+51 poke 0x800465D0 0x00000001
+51.1 until [0x800A50E8] 0x00FF0000 0x00110000 15
+52 random Space,Shift,W,A,S,D,Q,E,R,Up,Down,Left,Right
+62 shot bonus
+72 random off
+73 key Enter
+73.5 down Space
+73.5 down Shift
+73.5 down Q
+73.5 down R
+74 up Space
+74 up Shift
+74 up Q
+74 up R
+75 peek 0x800A4AD0
+76 peek 0x800A4AD0
+77 until 0x800A4AD0 0xFF000000 0x13000000 8
+79 peek 0x800A4AD0,0x800A4AE0,0x800A4AE4
+79.1 poke 0x800A4AE0 0x00000000
+79.1 poke 0x800A4AE4 0x00000500
+79.1 poke 0x800A4AD0 0x34110707
+79.1 poke 0x800465D0 0x00000001
+79.2 until 0x800A50E8 0xFFFFFFFF 0x800A4B18 30
+79.3 until 0x800A4B18 0x00FF0000 0x00040000 30
+80 random Space,Shift,W,A,S,D,Q,E,R,Up,Down,Left,Right
+100 shot one_player
+130 end
