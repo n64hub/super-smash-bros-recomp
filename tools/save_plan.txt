@@ -1,0 +1,31 @@
+# The save run of the save check (N64Recomp-browser's tools/frame_dump.mjs --saves, with tools/load_plan.txt): Start
+# through the opening and the title to the main menu (gSCManagerSceneData.scene_curr, the high byte of 0x800A4AD0, 7),
+# down to Options (sMNModeSelectOption, 0x80132C88, 2) and A, down to Screen Adjust (sMNOptionOption, 0x801337B8, 1)
+# and A, then the picture moved 3 right and 2 up with C (each key held 100 ms) and A, which writes the options to SRAM
+# (lbBackupWrite, saves/<game id>.sram). The offsets are then read in gSCManagerBackupData (0x800A44E0, the game's
+# copy of its SRAM): screen_adjust_h (+0x452) is 3 and screen_adjust_v (+0x454) is -2, so a key the game took twice
+# fails this run, which checks nothing, and not the load run.
+0 until 0x800A4AD0 0xFF000000 0x07000000 120 Enter
+2 shot main_menu
+2 key Down 100
+3 key Down 100
+4 until 0x80132C88 0xFFFFFFFF 0x2 5
+4.5 key Space 100
+5 until 0x800A4AD0 0xFF000000 0x39000000 10
+7 key Down 100
+8 until 0x801337B8 0xFFFFFFFF 0x1 5
+8.5 key Space 100
+9 until 0x800A4AD0 0xFF000000 0x0F000000 10
+11 key Right 100
+12 key Right 100
+13 key Right 100
+14 key Up 100
+15 key Up 100
+16 shot adjusted
+16.5 key Space 100
+17 until 0x800A4AD0 0xFF000000 0x39000000 10
+17.5 until 0x800A4930 0x0000FFFF 0x00000003 3
+17.5 until 0x800A4934 0xFFFF0000 0xFFFE0000 3
+18 saves changed 15
+20 shot options
+22 end
