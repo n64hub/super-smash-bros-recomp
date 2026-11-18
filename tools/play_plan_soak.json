@@ -6,7 +6,7 @@
   "another. Before the first and after each it logs a SOAK line: the scene and stage, the wasm heap and the JS heap",
   "Chrome reports, the save's boot count and anti-piracy bits, and port 1's Rumble Pak (tools/shader_survey.js), so a",
   "heap that grows battle after battle, or a check that starts failing, shows; play_page.mjs records the GPU process's",
-  "bytes beside it. Played only when a change could leak, with --max to fit (docs/playing.md, Which browser, how long)."
+  "bytes beside it. Played only when a change could leak, with --max to fit."
  ],
  "page": "SmashBrosRecompiled.html",
  "load": [["until", "RT64: all [0-9]+ prebuilt shaders built|once the game draws", 45000], ["wait", 5000]],
