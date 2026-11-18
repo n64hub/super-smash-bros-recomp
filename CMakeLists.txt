@@ -205,6 +205,7 @@ target_sources(SmashBrosRecompiled PRIVATE
     ${CMAKE_SOURCE_DIR}/src/game/config.cpp
     ${CMAKE_SOURCE_DIR}/src/game/libultra.cpp
     ${CMAKE_SOURCE_DIR}/src/game/recomp_api.cpp
+    ${CMAKE_SOURCE_DIR}/src/game/screen.cpp
 )
 if (SSB_PATCHES)
     target_sources(SmashBrosRecompiled PRIVATE ${CMAKE_SOURCE_DIR}/src/main/register_patches.cpp)
@@ -216,6 +217,7 @@ endif()
 
 target_include_directories(SmashBrosRecompiled PRIVATE
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/lib/rt64/include
     ${CMAKE_SOURCE_DIR}/lib/N64ModernRuntime/N64Recomp/include
     ${CMAKE_SOURCE_DIR}/lib/N64ModernRuntime/thirdparty
     ${CMAKE_SOURCE_DIR}/lib/N64ModernRuntime/thirdparty/sse2neon
