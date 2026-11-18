@@ -65,6 +65,11 @@ On Linux the same lines take `clang` and `clang++` in place of `clang-cl`, and t
 `build/SmashBrosRecompiled` (`.exe` on Windows) from the repo's root, pick the ROM with Load ROM, then Start Game.
 `tools/release.sh`'s header says how a release is built.
 
+The save, the program restarted and the save found again, with `saves/` and the SRAM file behind symlinks, is checked
+by machine on the Linux build (N64Recomp-browser's `tools/frame_dump.mjs --saves`): `tools/save_plan.txt` is the save
+run's plan, the picture moved on Screen Adjust, and `tools/load_plan.txt` the load run's after the restart, the
+offsets read back from the SRAM as the game boots and a second move written through the links.
+
 ## License
 
 GPL-3.0 (`LICENSE`), as the recompilations it follows. The symbols in `syms/` are Smash64RecompSyms', under CC0.

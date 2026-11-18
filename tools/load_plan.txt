@@ -1,0 +1,28 @@
+# The load run of the save check (N64Recomp-browser's tools/frame_dump.mjs --saves), after tools/save_plan.txt, the
+# program started again in the same folder: the game reads its SRAM into gSCManagerBackupData (0x800A44E0) as it boots,
+# before the N64 logo (scManagerRunLoop's lbBackupIsSramValid), and the screen offsets the save run set, 3 and -2
+# (screen_adjust_h at +0x452, screen_adjust_v at +0x454), are there only if they came off the SRAM: without it the
+# game takes its defaults, 0 and 0. Nothing is written by then; the title writes the save each boot (its boot count,
+# mnTitleStartScene), so `saves same` goes before Start. Then the picture is moved one back left on Screen Adjust and
+# A writes it through the check's links.
+0 until 0x800A4934 0xFFFF0000 0xFFFE0000 60
+0 until 0x800A4930 0x0000FFFF 0x00000003 3
+0.5 saves same
+1 until 0x800A4AD0 0xFF000000 0x07000000 120 Enter
+3 shot main_menu
+3 key Down 100
+4 key Down 100
+5 until 0x80132C88 0xFFFFFFFF 0x2 5
+5.5 key Space 100
+6 until 0x800A4AD0 0xFF000000 0x39000000 10
+8 key Down 100
+9 until 0x801337B8 0xFFFFFFFF 0x1 5
+9.5 key Space 100
+10 until 0x800A4AD0 0xFF000000 0x0F000000 10
+12 shot adjust
+12.5 key Left 100
+13.5 key Space 100
+14 until 0x800A4AD0 0xFF000000 0x39000000 10
+14.5 until 0x800A4930 0x0000FFFF 0x00000002 3
+15 saves changed 15
+17 end
